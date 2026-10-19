@@ -4,259 +4,248 @@
      Todo (HTML+CSS+JS) en un solo archivo. Sin dependencias externas
      salvo la librería docx (para generar Word), cargada por CDN.
      ============================================================ -->
+<meta charset="utf-8">
 <div id="genconv-root">
 <style>
-/* ====================== TOKENS / RESET ====================== */
-#genconv-root *{margin:0;padding:0;box-sizing:border-box}
-#genconv-root{
-  --ink:#12203a;          /* azul tinta profundo */
-  --ink-2:#2c3e63;
-  --paper:#f7f5ef;        /* papel legal cálido */
-  --paper-2:#efeadd;
-  --gold:#b08d3f;         /* dorado sello */
-  --gold-soft:#e8dcc0;
-  --line:#d9d2c2;
-  --white:#ffffff;
-  --green:#2f7d51;
-  --red:#b23b3b;
-  --shadow:0 10px 40px -12px rgba(18,32,58,.28);
-  --radius:16px;
-  --font-display:'Georgia','Times New Roman',serif;
-  --font-body:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
-  font-family:var(--font-body);
-  color:var(--ink);
-  line-height:1.55;
-  display:block;
-  width:100%;
-}
-#genconv-root button{font-family:inherit;cursor:pointer;border:none;background:none}
-#genconv-root input,#genconv-root select,#genconv-root textarea{font-family:inherit;font-size:15px;color:var(--ink)}
+/* ============================================================
+   INTERFAZ v3 — móvil primero. En teléfono, dos pestañas:
+   capturar y documento. En escritorio, las dos a la vez.
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&display=swap');
 
-/* ====================== V2: BARRA, CALC, IMPRESIÓN ====================== */
-.gc2-bar{margin:14px 0 6px;padding:12px 14px;background:#fff;border:1px solid var(--line);border-radius:12px}
-.gc2-bar-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.gc2-mini{font-size:12.5px;font-weight:700;padding:8px 12px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink)}
+:where(#genconv-root *){margin:0;padding:0}
+#genconv-root *{box-sizing:border-box}
+#genconv-root{
+  --ink:#131c2e;
+  --ink-2:#44536f;
+  --ink-3:#6b7892;
+  --paper:#fbfaf7;
+  --paper-2:#f2efe8;
+  --card:#ffffff;
+  --gold:#a8822f;
+  --gold-br:#d4ab4e;
+  --gold-soft:#f3e8cd;
+  --line:#e3ddd1;
+  --line-2:#d2cabb;
+  --green:#1f7a52;
+  --red:#b3362f;
+  --navy:#1a2740;
+  --shadow-sm:0 1px 2px rgba(19,28,46,.06),0 2px 8px rgba(19,28,46,.05);
+  --shadow-md:0 4px 12px rgba(19,28,46,.07),0 14px 36px -12px rgba(19,28,46,.18);
+  --r:14px;
+  --fd:'Fraunces',Georgia,'Times New Roman',serif;
+  --fb:'Public Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --fdoc:Georgia,'Times New Roman',serif;
+  font-family:var(--fb);color:var(--ink);line-height:1.55;display:block;width:100%;
+  -webkit-text-size-adjust:100%;
+}
+:where(#genconv-root button){font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+:where(#genconv-root input,#genconv-root select,#genconv-root textarea){font-family:inherit;color:var(--ink)}
+#genconv-root :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:6px}
+
+.gc-shell{
+  max-width:1280px;margin:0 auto;padding:18px 16px 120px;
+  background:linear-gradient(180deg,#fdfcfa,#f6f3ec 420px);
+}
+
+/* ---------- ENCABEZADO ---------- */
+.gc-hero{
+  position:relative;overflow:hidden;background:linear-gradient(145deg,var(--navy) 0%,#22314f 60%,#2b3c5e 100%);
+  color:#f6f2e8;border-radius:var(--r);padding:26px 22px;box-shadow:var(--shadow-md);
+}
+.gc-hero::after{
+  content:"§";position:absolute;right:-8px;bottom:-54px;font-family:var(--fd);font-size:190px;
+  color:rgba(212,171,78,.09);line-height:1;pointer-events:none
+}
+.gc-hero-badge{
+  display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:600;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--gold-br);border:1px solid rgba(212,171,78,.35);
+  background:rgba(212,171,78,.09);padding:5px 11px;border-radius:999px;margin-bottom:14px
+}
+.gc-hero-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--gold-br)}
+.gc-hero h1{font-family:var(--fd);font-weight:600;font-size:clamp(1.5rem,5.4vw,2.3rem);line-height:1.12;letter-spacing:-.02em;text-wrap:balance}
+.gc-hero h1 em{font-style:italic;color:var(--gold-br)}
+.gc-hero p{margin-top:10px;font-size:14.5px;color:#c9d2e2;max-width:62ch}
+.gc-hero-stats{display:flex;flex-wrap:wrap;gap:22px;margin-top:20px;padding-top:16px;border-top:1px solid rgba(212,171,78,.22)}
+.gc-stat .n{font-family:var(--fd);font-weight:700;font-size:1.5rem;color:#fff;font-variant-numeric:tabular-nums}
+.gc-stat .l{font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:#9fb0c9;margin-top:1px}
+
+/* ---------- PESTAÑAS (solo teléfono) ---------- */
+.gc-tabs{display:none;position:sticky;top:0;z-index:30;margin:14px -16px 0;padding:8px 16px;
+  background:rgba(251,250,247,.93);backdrop-filter:saturate(1.4) blur(8px);border-bottom:1px solid var(--line)}
+.gc-tabs-inner{display:flex;gap:6px;background:var(--paper-2);padding:4px;border-radius:11px}
+.gc-tab{flex:1;padding:9px 10px;border-radius:8px;font-size:13.5px;font-weight:600;color:var(--ink-2);text-align:center}
+.gc-tab.on{background:var(--card);color:var(--ink);box-shadow:var(--shadow-sm)}
+
+/* ---------- ESTRUCTURA ---------- */
+.gc-main{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;margin-top:16px}
+.gc-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-sm);overflow:hidden}
+.gc-card-head{padding:18px 18px 0}
+.gc-card-head h2{font-family:var(--fd);font-weight:600;font-size:1.12rem;letter-spacing:-.01em}
+.gc-card-head .sub{font-size:12.5px;color:var(--ink-3);margin-top:2px}
+
+/* ---------- PASOS ---------- */
+.gc-steps{display:flex;gap:7px;padding:14px 18px 0;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.gc-steps::-webkit-scrollbar{display:none}
+.gc-step-pill{display:flex;align-items:center;gap:7px;flex:0 0 auto;padding:7px 12px;border-radius:999px;
+  border:1px solid var(--line);background:var(--paper);font-size:12.5px;font-weight:600;color:var(--ink-3);cursor:pointer;white-space:nowrap}
+.gc-step-pill .num{display:grid;place-items:center;width:19px;height:19px;border-radius:50%;background:var(--line);color:#fff;font-size:11px;font-weight:700}
+.gc-step-pill.active{background:var(--navy);border-color:var(--navy);color:#fff}
+.gc-step-pill.active .num{background:var(--gold-br);color:var(--navy)}
+.gc-step-pill.done{border-color:var(--gold-soft);background:#fdf9ef;color:var(--gold)}
+.gc-step-pill.done .num{background:var(--gold-br);color:#fff}
+.gc-progress-track{height:3px;background:var(--line);margin:14px 18px 0;border-radius:2px;overflow:hidden}
+.gc-progress-bar{height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--gold-br));transition:width .35s cubic-bezier(.22,1,.36,1)}
+
+/* ---------- BARRA DE CASOS ---------- */
+.gc2-bar{margin:14px 18px 0;padding:12px;background:var(--paper);border:1px solid var(--line);border-radius:11px}
+.gc2-bar-row{display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+.gc2-mini{font-size:12.5px;font-weight:600;padding:9px 13px;border-radius:9px;border:1px solid var(--line-2);background:var(--card);min-height:38px}
 .gc2-mini:hover{background:var(--paper-2)}
-.gc2-mini.danger{color:var(--red);border-color:#e7cccc}
-.gc2-select{font-size:12.5px;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:#fff;max-width:260px}
-.gc2-auto{font-size:11.5px;color:var(--green);margin-left:auto;font-weight:600}
-.gc2-details{margin-top:10px;border-top:1px dashed var(--line);padding-top:10px}
-.gc2-details summary{cursor:pointer;font-size:13px;font-weight:700;color:var(--ink-2)}
-.gc2-calc{background:var(--paper);border:1px solid var(--gold-soft);border-radius:12px;padding:14px;margin-bottom:16px}
-.gc2-calc-head{font-weight:800;font-size:13px;margin-bottom:8px}
-.gc2-calc-head span{font-weight:500;color:var(--gold);font-size:11.5px;margin-left:6px}
-.gc2-calc-out{font-size:13px;margin:8px 0;color:var(--ink-2)}
-.gc2-bad{color:var(--red);font-weight:700}
+.gc2-mini.danger{color:var(--red);border-color:#e6cfcd}
+.gc2-select{font-family:inherit;font-size:12.5px;padding:9px 11px;border-radius:9px;border:1px solid var(--line-2);background:var(--card);flex:1 1 150px;min-width:0;min-height:38px}
+.gc2-auto{font-size:11.5px;color:var(--green);font-weight:600;flex:1 1 100%}
+.gc2-details{margin-top:11px;border-top:1px dashed var(--line-2);padding-top:11px}
+.gc2-details summary{cursor:pointer;font-size:12.5px;font-weight:700;color:var(--ink-2);padding:3px 0;list-style:none;display:flex;align-items:center;gap:6px}
+.gc2-details summary::before{content:"▸";color:var(--gold);font-size:11px;transition:transform .2s}
+.gc2-details[open] summary::before{transform:rotate(90deg)}
+
+/* ---------- FORMULARIO ---------- */
+.gc-form{padding:4px 18px 18px}
+.gc-panel{display:none;padding-top:14px}
+.gc-panel.active{display:block;animation:gcIn .3s cubic-bezier(.22,1,.36,1)}
+@keyframes gcIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+.gc-panel-title{font-family:var(--fd);font-weight:600;font-size:1.06rem}
+.gc-panel-note{font-size:12.5px;color:var(--ink-3);margin-top:2px;margin-bottom:4px}
+.gc-group-title{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);
+  margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.gc-field{margin-bottom:13px;min-width:0}
+.gc-field.row{display:grid;grid-template-columns:1fr;gap:13px}
+.gc-label{display:block;font-size:12.5px;font-weight:600;color:var(--ink-2);margin-bottom:5px}
+.req{color:var(--red)}
+.gc-input{
+  width:100%;min-width:0;font-size:16px;              /* 16px evita el zoom de iOS */
+  padding:11px 13px;border:1px solid var(--line-2);border-radius:10px;background:var(--card);
+  transition:border-color .15s,box-shadow .15s;min-height:44px
+}
+.gc-input:hover{border-color:var(--ink-3)}
+.gc-input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,171,78,.16);outline:none}
+select.gc-input{appearance:none;background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7892' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 13px center;padding-right:34px}
+textarea.gc-input{min-height:84px;resize:vertical;line-height:1.5}
+.gc-hint{font-size:11.5px;color:var(--ink-3);margin-top:5px;line-height:1.45}
+.gc-chips{display:flex;flex-wrap:wrap;gap:7px}
+.gc-chip{padding:10px 14px;border-radius:999px;border:1px solid var(--line-2);background:var(--card);
+  font-size:13px;font-weight:600;color:var(--ink-2);min-height:40px}
+.gc-chip:hover{border-color:var(--gold);background:#fdfaf3}
+.gc-chip.on{background:var(--navy);border-color:var(--navy);color:#fff}
+
+/* ---------- CALCULADORA ---------- */
+.gc2-calc{background:linear-gradient(145deg,#fdfaf2,#f8f2e3);border:1px solid var(--gold-soft);border-radius:12px;padding:14px;margin-bottom:18px}
+.gc2-calc-head{font-weight:700;font-size:13px;display:flex;flex-wrap:wrap;align-items:baseline;gap:6px}
+.gc2-calc-head span{font-weight:500;color:var(--gold);font-size:11.5px}
+.gc2-calc-out{font-size:13px;margin:10px 0;color:var(--ink-2);line-height:1.5}
 .gc2-ok{color:var(--green);font-weight:700}
+.gc2-bad{color:var(--red);font-weight:700}
+
+/* ---------- NAVEGACIÓN ---------- */
+.gc-nav{display:flex;gap:9px;margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}
+.gc-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:12px 18px;border-radius:10px;
+  font-size:14.5px;font-weight:700;min-height:46px;transition:transform .12s,box-shadow .18s,background .18s}
+.gc-btn:active{transform:translateY(1px)}
+.gc-btn-primary{background:var(--navy);color:#fff;flex:1}
+.gc-btn-primary:hover{background:#22304d}
+.gc-btn-ghost{background:var(--card);color:var(--ink-2);border:1px solid var(--line-2)}
+.gc-btn-ghost:hover{background:var(--paper-2)}
+.gc-btn-gold{background:linear-gradient(145deg,var(--gold-br),var(--gold));color:#fff;flex:1;box-shadow:0 2px 10px rgba(168,130,47,.3)}
+.gc-btn-gold:hover{filter:brightness(1.05)}
+
+/* ---------- DOCUMENTO ---------- */
+.gc-preview-wrap{display:flex;flex-direction:column;min-width:0}
+.gc-doc-scroll{padding:0 14px 14px;overflow:auto;max-height:none;background:var(--paper-2)}
+.gc-doc{
+  background:#fff;border:1px solid var(--line);border-radius:4px;padding:28px 22px;font-family:var(--fdoc);
+  font-size:12.5px;line-height:1.72;color:#1c1c1c;position:relative;box-shadow:var(--shadow-sm);min-width:0
+}
+.gc-doc h3{font-family:var(--fdoc);text-align:center;font-size:14px;font-weight:700;letter-spacing:.02em;text-wrap:balance}
+.gc-doc-watermark{
+  position:absolute;inset:0;display:grid;place-items:center;font-family:var(--fd);font-size:clamp(44px,12vw,80px);
+  font-weight:700;color:rgba(26,39,64,.045);transform:rotate(-24deg);pointer-events:none;user-select:none;letter-spacing:.1em
+}
+.doc-sub{text-align:center;font-size:11px;color:#666;margin-top:3px;letter-spacing:.08em}
+.doc-rule{height:1px;background:var(--line);margin:14px 0}
+.doc-clause{margin:11px 0;text-align:justify;hyphens:auto}
+.doc-parties{text-align:center;margin:12px 0;line-height:1.6}
+.doc-empty{color:#b9b2a6;font-style:italic}
+.hl{background:linear-gradient(180deg,transparent 58%,rgba(212,171,78,.34) 58%);font-weight:600}
 .gc2-anexo{margin-top:18px;padding-top:12px;border-top:1px solid var(--line)}
+.gc-preview-toolbar{display:flex;gap:9px;padding:12px 14px;border-top:1px solid var(--line);background:var(--card)}
+.gc-preview-toolbar .gc-btn{flex:1;font-size:13px;padding:10px 12px}
+
+/* ---------- REVISIÓN ---------- */
+#gcReview{font-size:13px}
+
+/* ---------- PIE ---------- */
+.gc-feats{display:grid;grid-template-columns:1fr;gap:11px;margin-top:18px}
+.gc-feat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:15px;box-shadow:var(--shadow-sm)}
+.gc-feat .ic{font-size:19px;margin-bottom:7px}
+.gc-feat h4{font-family:var(--fd);font-weight:600;font-size:14.5px;margin-bottom:3px}
+.gc-feat p{font-size:12.5px;color:var(--ink-3);line-height:1.5}
+.gc-foot{margin-top:22px;padding-top:16px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-3);line-height:1.6;text-align:center}
+
+/* ---------- AVISO ---------- */
+.gc-toast{
+  position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translate(-50%,16px);
+  display:flex;align-items:center;gap:9px;background:var(--navy);color:#fff;padding:12px 18px;border-radius:11px;
+  font-size:13.5px;font-weight:600;box-shadow:var(--shadow-md);opacity:0;pointer-events:none;
+  transition:opacity .25s,transform .25s;z-index:60;max-width:calc(100vw - 32px)
+}
+.gc-toast.show{opacity:1;transform:translate(-50%,0)}
+.gc-toast .check{display:grid;place-items:center;width:19px;height:19px;border-radius:50%;background:var(--gold-br);color:var(--navy);font-size:12px;font-weight:700}
+
+/* ---------- BARRA FIJA DE ACCIONES (teléfono) ---------- */
+.gc-dock{
+  position:fixed;left:0;right:0;bottom:0;z-index:50;display:none;gap:8px;
+  padding:10px max(14px,env(safe-area-inset-left,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(14px,env(safe-area-inset-right,0px));
+  background:rgba(255,255,255,.95);backdrop-filter:blur(10px);border-top:1px solid var(--line)
+}
+.gc-dock .gc-btn{flex:1;font-size:14px;min-height:48px}
+
+/* ---------- ESCRITORIO ---------- */
+@media (min-width:900px){
+  .gc-shell{padding:26px 22px 40px}
+  .gc-hero{padding:34px 32px}
+  .gc-main{grid-template-columns:minmax(0,1.02fr) minmax(0,.98fr);gap:18px;align-items:start}
+  .gc-card-head,.gc-steps,.gc2-bar,.gc-form{padding-left:22px;padding-right:22px}
+  .gc2-bar{margin-left:22px;margin-right:22px}
+  .gc-progress-track{margin-left:22px;margin-right:22px}
+  .gc-field.row{grid-template-columns:1fr 1fr}
+  .gc-preview-wrap{position:sticky;top:18px;max-height:calc(100vh - 36px)}
+  .gc-doc-scroll{overflow-y:auto;flex:1}
+  .gc-doc{padding:34px 30px;font-size:13px}
+  .gc-feats{grid-template-columns:repeat(4,1fr);gap:14px}
+  .gc-toast{bottom:26px}
+}
+@media (max-width:899px){
+  .gc-tabs{display:block}
+  .gc-dock{display:flex}
+  .gc-main.vista-doc > .gc-card:first-child{display:none}
+  .gc-main:not(.vista-doc) > .gc-preview-wrap{display:none}
+  .gc-nav{display:none}            /* en teléfono navega la barra fija */
+  .gc-hero-stats{gap:16px}
+}
+
+/* ---------- IMPRESIÓN ---------- */
 @media print{
   body *{visibility:hidden !important}
-  #gcDoc, #gcDoc *{visibility:visible !important}
+  #gcDoc,#gcDoc *{visibility:visible !important}
   #gcDoc{position:absolute;left:0;top:0;width:100%;max-width:none;box-shadow:none;border:0;padding:0;font-size:12px}
   .gc-doc-watermark{display:none !important}
   .hl{background:none !important;font-weight:600}
 }
-
-/* ====================== SHELL ====================== */
-.gc-shell{
-  max-width:1180px;margin:0 auto;padding:28px 18px 64px;
-  background:
-    radial-gradient(1200px 500px at 80% -10%, rgba(176,141,63,.08), transparent 60%),
-    linear-gradient(180deg,#fbfaf6,#f3efe6);
-  border-radius:24px;
+@media (prefers-reduced-motion:reduce){
+  #genconv-root *{animation-duration:.01ms !important;transition-duration:.01ms !important}
 }
-
-/* ====================== HERO ====================== */
-.gc-hero{
-  position:relative;overflow:hidden;
-  background:linear-gradient(135deg,var(--ink) 0%,#1b2f52 55%,#243b63 100%);
-  color:#f4f1e8;border-radius:20px;padding:40px 38px;
-  box-shadow:var(--shadow);
-}
-.gc-hero::before{
-  content:"";position:absolute;inset:0;
-  background-image:radial-gradient(circle at 1px 1px, rgba(255,255,255,.06) 1px, transparent 0);
-  background-size:22px 22px;opacity:.5;
-}
-.gc-hero::after{
-  content:"§";position:absolute;right:-10px;bottom:-40px;
-  font-family:var(--font-display);font-size:230px;color:rgba(232,220,192,.07);
-  line-height:1;pointer-events:none;
-}
-.gc-hero-badge{
-  display:inline-flex;align-items:center;gap:8px;
-  background:rgba(232,220,192,.12);border:1px solid rgba(232,220,192,.28);
-  color:var(--gold-soft);font-size:12px;letter-spacing:.14em;text-transform:uppercase;
-  padding:7px 14px;border-radius:100px;margin-bottom:20px;font-weight:600;
-  position:relative;z-index:1;
-}
-.gc-hero-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--gold);
-  box-shadow:0 0 0 0 rgba(176,141,63,.7);animation:pulse 2.4s infinite}
-@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(176,141,63,.6)}70%{box-shadow:0 0 0 8px rgba(176,141,63,0)}100%{box-shadow:0 0 0 0 rgba(176,141,63,0)}}
-.gc-hero h1{
-  font-family:var(--font-display);font-weight:700;
-  font-size:clamp(28px,4.6vw,48px);line-height:1.05;letter-spacing:-.5px;
-  position:relative;z-index:1;max-width:16ch;
-}
-.gc-hero h1 em{color:var(--gold-soft);font-style:italic}
-.gc-hero p{
-  margin-top:16px;max-width:56ch;color:#d7dbe6;font-size:16px;position:relative;z-index:1;
-}
-.gc-hero-stats{display:flex;gap:30px;margin-top:26px;flex-wrap:wrap;position:relative;z-index:1}
-.gc-stat .n{font-family:var(--font-display);font-size:30px;font-weight:700;color:#fff}
-.gc-stat .l{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#9fb0cf}
-
-/* ====================== LAYOUT ====================== */
-.gc-main{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;margin-top:26px}
-@media(max-width:960px){.gc-main{grid-template-columns:1fr}}
-
-.gc-card{
-  background:var(--white);border:1px solid var(--line);border-radius:var(--radius);
-  box-shadow:0 4px 24px -14px rgba(18,32,58,.25);overflow:hidden;
-}
-.gc-card-head{
-  padding:20px 24px;border-bottom:1px solid var(--line);
-  background:linear-gradient(180deg,#fff,#faf8f2);
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
-}
-.gc-card-head h2{font-family:var(--font-display);font-size:19px;font-weight:700;color:var(--ink)}
-.gc-card-head .sub{font-size:12.5px;color:#7b8496;margin-top:2px}
-
-/* ====================== STEPPER ====================== */
-.gc-steps{display:flex;gap:6px;padding:16px 24px 0;flex-wrap:wrap}
-.gc-step-pill{
-  display:flex;align-items:center;gap:8px;font-size:12.5px;color:#98a0b0;
-  padding:8px 12px;border-radius:100px;transition:.35s;font-weight:600;white-space:nowrap;
-}
-.gc-step-pill .num{
-  width:22px;height:22px;border-radius:50%;display:grid;place-items:center;
-  background:#e9e6dd;color:#98a0b0;font-size:12px;font-weight:700;transition:.35s;
-}
-.gc-step-pill.active{background:var(--ink);color:#fff}
-.gc-step-pill.active .num{background:var(--gold);color:#fff}
-.gc-step-pill.done{color:var(--green)}
-.gc-step-pill.done .num{background:var(--green);color:#fff}
-
-.gc-progress-track{height:4px;background:#ece8dd;border-radius:100px;margin:14px 24px 0;overflow:hidden}
-.gc-progress-bar{height:100%;width:0;background:linear-gradient(90deg,var(--gold),#d4b978);
-  border-radius:100px;transition:width .5s cubic-bezier(.4,0,.2,1)}
-
-/* ====================== FORM ====================== */
-.gc-form{padding:22px 24px}
-.gc-panel{display:none;animation:fade .45s cubic-bezier(.4,0,.2,1)}
-.gc-panel.active{display:block}
-@keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-.gc-panel-title{font-family:var(--font-display);font-size:16px;font-weight:700;margin-bottom:4px;color:var(--ink-2)}
-.gc-panel-note{font-size:13px;color:#7b8496;margin-bottom:18px;padding-bottom:14px;border-bottom:1px dashed var(--line)}
-
-.gc-field{margin-bottom:16px}
-.gc-field.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-@media(max-width:560px){.gc-field.row{grid-template-columns:1fr}}
-.gc-label{display:block;font-size:12.5px;font-weight:600;color:var(--ink-2);margin-bottom:6px;letter-spacing:.01em}
-.gc-label .req{color:var(--red);margin-left:2px}
-.gc-input,.gc-select,.gc-textarea{
-  width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:10px;
-  background:#fdfcf9;transition:.2s;outline:none;
-}
-.gc-input:focus,.gc-select:focus,.gc-textarea:focus{
-  border-color:var(--gold);background:#fff;box-shadow:0 0 0 3px rgba(176,141,63,.14)
-}
-.gc-textarea{resize:vertical;min-height:70px}
-.gc-hint{font-size:11.5px;color:#98a0b0;margin-top:5px}
-
-.gc-group-title{
-  display:flex;align-items:center;gap:10px;margin:22px 0 12px;
-  font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--gold);
-}
-.gc-group-title::after{content:"";flex:1;height:1px;background:var(--line)}
-
-/* toggle chips */
-.gc-chips{display:flex;gap:8px;flex-wrap:wrap}
-.gc-chip{
-  padding:9px 14px;border:1.5px solid var(--line);border-radius:100px;font-size:13px;
-  background:#fdfcf9;color:var(--ink-2);transition:.2s;font-weight:600;
-}
-.gc-chip:hover{border-color:var(--gold)}
-.gc-chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
-
-/* ====================== NAV BUTTONS ====================== */
-.gc-nav{display:flex;justify-content:space-between;gap:12px;padding:18px 24px 4px;border-top:1px solid var(--line)}
-.gc-btn{
-  padding:12px 22px;border-radius:100px;font-size:14px;font-weight:700;transition:.25s;
-  display:inline-flex;align-items:center;gap:8px;
-}
-.gc-btn-primary{background:var(--ink);color:#fff}
-.gc-btn-primary:hover{background:#1b2f52;transform:translateY(-1px);box-shadow:0 8px 20px -8px rgba(18,32,58,.5)}
-.gc-btn-ghost{background:transparent;color:var(--ink-2);border:1.5px solid var(--line)}
-.gc-btn-ghost:hover{border-color:var(--ink-2)}
-.gc-btn-gold{background:linear-gradient(135deg,var(--gold),#c9a54e);color:#fff}
-.gc-btn-gold:hover{transform:translateY(-1px);box-shadow:0 10px 24px -8px rgba(176,141,63,.6)}
-.gc-btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important;box-shadow:none!important}
-
-/* ====================== PREVIEW ====================== */
-.gc-preview-wrap{position:sticky;top:16px}
-.gc-doc-scroll{
-  max-height:640px;overflow-y:auto;padding:0;background:var(--paper-2);
-  border-radius:0 0 var(--radius) var(--radius);
-}
-.gc-doc-scroll::-webkit-scrollbar{width:10px}
-.gc-doc-scroll::-webkit-scrollbar-thumb{background:#c9c0ab;border-radius:100px;border:3px solid var(--paper-2)}
-.gc-doc{
-  background:#fff;margin:18px;padding:38px 40px;border-radius:6px;
-  box-shadow:0 6px 30px -8px rgba(18,32,58,.2);
-  font-family:var(--font-display);font-size:12.5px;line-height:1.7;color:#1a1a1a;
-  min-height:400px;position:relative;
-}
-.gc-doc::before{
-  content:"";position:absolute;top:0;left:0;right:0;height:5px;
-  background:linear-gradient(90deg,var(--ink),var(--gold),var(--ink));border-radius:6px 6px 0 0;
-}
-.gc-doc h3{text-align:center;font-size:15px;font-weight:700;margin-bottom:4px;letter-spacing:.3px;text-transform:uppercase}
-.gc-doc .doc-sub{text-align:center;font-size:11px;font-style:italic;color:#666;margin-bottom:18px}
-.gc-doc .doc-parties{text-align:center;margin:14px 0;font-size:13px}
-.gc-doc .doc-parties strong{display:block;font-size:14px;margin:3px 0}
-.gc-doc .doc-rule{height:1px;background:#ddd;margin:16px 0}
-.gc-doc .doc-clause{margin:12px 0}
-.gc-doc .doc-clause b{color:var(--ink)}
-.gc-doc .hl{background:linear-gradient(transparent 60%,rgba(176,141,63,.32) 0);font-weight:600;padding:0 1px}
-.gc-doc .doc-empty{color:#c9c0ab;font-style:italic}
-.gc-doc-watermark{
-  position:absolute;top:44%;left:50%;transform:translate(-50%,-50%) rotate(-24deg);
-  font-size:52px;font-weight:800;color:rgba(18,32,58,.05);letter-spacing:6px;
-  pointer-events:none;text-transform:uppercase;white-space:nowrap;
-}
-
-.gc-preview-toolbar{
-  display:flex;gap:8px;padding:14px 20px;border-top:1px solid var(--line);
-  background:#faf8f2;flex-wrap:wrap;
-}
-
-/* ====================== FEATURES STRIP ====================== */
-.gc-feats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:26px}
-@media(max-width:840px){.gc-feats{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:460px){.gc-feats{grid-template-columns:1fr}}
-.gc-feat{
-  background:var(--white);border:1px solid var(--line);border-radius:14px;padding:18px;
-  transition:.3s;position:relative;overflow:hidden;
-}
-.gc-feat:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--gold-soft)}
-.gc-feat .ic{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;
-  background:linear-gradient(135deg,var(--paper),var(--gold-soft));font-size:19px;margin-bottom:12px}
-.gc-feat h4{font-size:14px;font-weight:700;margin-bottom:4px;color:var(--ink)}
-.gc-feat p{font-size:12.5px;color:#7b8496;line-height:1.5}
-
-/* ====================== TOAST ====================== */
-.gc-toast{
-  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120px);
-  background:var(--ink);color:#fff;padding:14px 22px;border-radius:100px;font-size:14px;font-weight:600;
-  box-shadow:var(--shadow);z-index:9999;transition:.4s cubic-bezier(.4,0,.2,1);display:flex;align-items:center;gap:10px;
-}
-.gc-toast.show{transform:translateX(-50%) translateY(0)}
-.gc-toast .check{width:20px;height:20px;border-radius:50%;background:var(--green);display:grid;place-items:center;font-size:12px}
-
-/* footer note */
-.gc-foot{margin-top:28px;text-align:center;font-size:12px;color:#98a0b0;line-height:1.6}
-.gc-foot b{color:var(--ink-2)}
 </style>
 
 <div class="gc-shell">
@@ -273,8 +262,16 @@
     </div>
   </div>
 
+  <!-- PESTAÑAS (teléfono) -->
+  <div class="gc-tabs">
+    <div class="gc-tabs-inner">
+      <button type="button" class="gc-tab on" data-vista="captura">Capturar</button>
+      <button type="button" class="gc-tab" data-vista="doc">Documento</button>
+    </div>
+  </div>
+
   <!-- MAIN -->
-  <div class="gc-main">
+  <div class="gc-main" id="gcMain">
 
     <!-- LEFT: WIZARD -->
     <div class="gc-card">
@@ -637,12 +634,19 @@
   </div>
 </div>
 
+<!-- BARRA FIJA (teléfono) -->
+<div class="gc-dock">
+  <button class="gc-btn gc-btn-ghost" id="gcPrevM">← Atrás</button>
+  <button class="gc-btn gc-btn-primary" id="gcNextM">Siguiente →</button>
+  <button class="gc-btn gc-btn-gold" id="gcDocM">Ver documento</button>
+</div>
+
 <!-- TOAST -->
 <div class="gc-toast" id="gcToast"><span class="check">✓</span><span id="gcToastMsg">Documento generado</span></div>
 </div>
 
 <!-- Librería docx para generar Word (con respaldo en jsDelivr si cdnjs falla) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.5.0/docx.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js"></script>
 <script>
 /* ============================================================
    MOTOR v2 — Generador de convenios REGUTT
@@ -677,7 +681,10 @@
   const CEN = ['','CIENTO','DOSCIENTOS','TRESCIENTOS','CUATROCIENTOS','QUINIENTOS','SEISCIENTOS',
     'SETECIENTOS','OCHOCIENTOS','NOVECIENTOS'];
 
-  function centenas(n){            // 0..999
+  /* El número que acompaña a un sustantivo se apocopa: UN PESO, VEINTIÚN MIL,
+     TREINTA Y UN PESOS. Sin esto el documento dice "UNO PESOS", que en un
+     escrito judicial se lee como descuido. */
+  function centenas(n, ap){        // 0..999 — ap: forma apocopada
     if(n === 0) return '';
     if(n === 100) return 'CIEN';
     let t = '';
@@ -685,33 +692,42 @@
     if(c) t = CEN[c];
     if(r){
       if(t) t += ' ';
-      if(r < 30) t += UNI[r];
-      else {
+      if(r < 30){
+        if(ap && r === 1) t += 'UN';
+        else if(ap && r === 21) t += 'VEINTIÚN';
+        else t += UNI[r];
+      } else {
         const d = Math.floor(r/10), u = r%10;
-        t += DEC[d] + (u ? ' Y ' + UNI[u] : '');
+        t += DEC[d] + (u ? ' Y ' + ((ap && u === 1) ? 'UN' : UNI[u]) : '');
       }
     }
     return t;
   }
-  function miles(n){               // 0..999999
+  function miles(n, ap){           // 0..999999
     const m = Math.floor(n/1000), r = n%1000;
-    if(!m) return centenas(r);
+    if(!m) return centenas(r, ap);
     // En documentos legales mexicanos se escribe "UN MIL", no "MIL"
-    const pre = (m === 1) ? 'UN MIL' : centenas(m) + ' MIL';
-    return pre + (r ? ' ' + centenas(r) : '');
+    const pre = (m === 1) ? 'UN MIL' : centenas(m, true) + ' MIL';
+    return pre + (r ? ' ' + centenas(r, ap) : '');
   }
-  function enteroALetra(n){
+  function enteroALetra(n, ap){
     if(n === 0) return 'CERO';
     const mill = Math.floor(n/1000000), r = n%1000000;
-    if(!mill) return miles(r);
-    const pre = (mill === 1) ? 'UN MILLÓN' : miles(mill) + ' MILLONES';
-    return pre + (r ? ' ' + miles(r) : '');
+    if(!mill) return miles(r, ap);
+    const pre = (mill === 1) ? 'UN MILLÓN' : miles(mill, true) + ' MILLONES';
+    return pre + (r ? ' ' + miles(r, ap) : '');
   }
-  /** 5000 -> "CINCO MIL PESOS 00/100 M.N." */
+  /** 5000 -> "CINCO MIL PESOS 00/100 M.N."; 1 -> "UN PESO 00/100 M.N." */
   function pesosALetra(valor){
-    const n = Math.round(Math.abs(Number(valor) || 0) * 100);
+    const v = Number(valor);
+    if(!isFinite(v) || v < 0) return '';
+    const n = Math.round(v * 100);
     const ent = Math.floor(n/100), cts = n%100;
-    return enteroALetra(ent) + ' PESOS ' + String(cts).padStart(2,'0') + '/100 M.N.';
+    const letra = enteroALetra(ent, true);
+    const unidad = (ent === 1) ? 'PESO' : 'PESOS';
+    // "UN MILLÓN DE PESOS", pero "DOS MILLONES QUINIENTOS MIL PESOS"
+    const de = (ent >= 1000000 && ent % 1000000 === 0) ? 'DE ' : '';
+    return letra + ' ' + de + unidad + ' ' + String(cts).padStart(2,'0') + '/100 M.N.';
   }
   function fmtPesos(valor){
     const n = Number(valor) || 0;
@@ -719,8 +735,11 @@
   }
   /** Lo que exige el juzgado: número y letra juntos. */
   function money(valor, vacio){
-    const raw = String(valor == null ? '' : valor).replace(/[^0-9.]/g,'');
-    if(raw === '' || isNaN(Number(raw))) return vacio || '[monto]';
+    const txt = String(valor == null ? '' : valor).trim();
+    if(txt.charAt(0) === '-') return vacio || '[monto inválido]';
+    const raw = txt.replace(/[^0-9.]/g,'');
+    const n = Number(raw);
+    if(raw === '' || !isFinite(n) || n < 0) return vacio || '[monto]';
     return fmtPesos(raw) + ' (' + pesosALetra(raw) + ')';
   }
 
@@ -1061,6 +1080,7 @@
     el.innerHTML = '<option value="">— Casos guardados ('+keys.length+') —</option>' +
       keys.map(k=> `<option value="${esc(k)}"${k===sel?' selected':''}>${esc(cases[k].nombre||k)}</option>`).join('');
   }
+  let casoActual = null;   // clave del caso abierto, para no duplicarlo al guardar
   let saveTimer = null;
   function save(){
     clearTimeout(saveTimer);
@@ -1070,7 +1090,8 @@
   }
   $('#gc2Save') && $('#gc2Save').addEventListener('click', ()=>{
     const cases = readCases();
-    const key = $('#gc2Cases').value || ('caso_' + Date.now());
+    const key = $('#gc2Cases').value || casoActual || ('caso_' + Date.now());
+    casoActual = key;
     const snap = snapshot(); snap.nombre = caseName();
     cases[key] = snap; writeCases(cases); refreshCaseList(key);
     toast('Caso guardado ✓');
@@ -1078,16 +1099,40 @@
   $('#gc2Cases') && $('#gc2Cases').addEventListener('change', e=>{
     const k = e.target.value; if(!k) return;
     const cases = readCases();
-    if(cases[k]){ restore(cases[k]); toast('Caso abierto'); }
+    if(cases[k]){ casoActual = k; restore(cases[k]); toast('Caso abierto'); }
   });
+  let borrarArmado = null;
   $('#gc2Del') && $('#gc2Del').addEventListener('click', ()=>{
-    const k = $('#gc2Cases').value;
-    if(!k){ toast('Elige un caso de la lista'); return; }
-    const cases = readCases(); delete cases[k]; writeCases(cases); refreshCaseList();
-    toast('Caso borrado');
+    const btn = $('#gc2Del');
+    const k = $('#gc2Cases').value || casoActual;
+    if(!k || !readCases()[k]){ toast('Abre o elige un caso para borrarlo'); return; }
+    if(borrarArmado !== k){              // primer clic: pide confirmación
+      borrarArmado = k;
+      btn.textContent = '¿Borrar? Confirmar';
+      clearTimeout(btn._t);
+      btn._t = setTimeout(()=>{ borrarArmado = null; btn.textContent = 'Borrar'; }, 4000);
+      return;
+    }
+    const cases = readCases(); const nombre = (cases[k]||{}).nombre || k;
+    delete cases[k]; writeCases(cases);
+    if(casoActual === k) casoActual = null;
+    borrarArmado = null; btn.textContent = 'Borrar'; clearTimeout(btn._t);
+    refreshCaseList();
+    toast('Borrado: ' + nombre);
   });
   $('#gc2NewCase') && $('#gc2NewCase').addEventListener('click', ()=>{
-    allFields().forEach(e=>{ if(e.id !== 'f_juzgado' && !e.id.startsWith('f_desp_')) e.value=''; });
+    allFields().forEach(e=>{
+      if(e.id === 'f_juzgado' || e.id.startsWith('f_desp_')) return;
+      if(e.tagName === 'SELECT') e.selectedIndex = 0; else e.value = '';
+    });
+    // las opciones marcadas vuelven a su valor inicial, o se arrastra la custodia anterior
+    Object.assign(state, { doc:'custodia', custodia:'compartida', viaje:'si', modal:'transferencia', marco:'cpc' });
+    [['#gcDocType','doc'],['#gcCustodia','custodia'],['#gcViajes','viaje'],['#gcModalidad','modal'],['#gcMarco','marco']]
+      .forEach(([sel,key])=>{
+        const cont = $(sel); if(!cont) return;
+        $$('.gc-chip',cont).forEach(c=> c.classList.toggle('on', c.dataset[Object.keys(c.dataset)[0]] === state[key]));
+      });
+    casoActual = null;
     $('#gc2Cases').value = '';
     calcUpdate(); clabeUpdate(); pensionLetraUpdate(); garantiaUpdate(); render(); save();
     step = 0; refreshSteps();
@@ -1115,13 +1160,29 @@
   function ensureDocx(cb){
     if(window.docx) return cb(true);
     const s = document.createElement('script');
-    s.src = 'https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js';
+    s.src = 'https://unpkg.com/docx@8.5.0/build/index.umd.js';
     s.onload = ()=> cb(!!window.docx);
     s.onerror = ()=> cb(false);
     document.head.appendChild(s);
   }
 
+  /** Campos sin los que el documento no tiene sentido ante un juzgado. */
+  function faltantes(){
+    const req = [['f_padre_nombre','el nombre del primer promovente'],
+                 ['f_madre_nombre','el nombre del segundo promovente'],
+                 ['f_menor_nombre','el nombre del menor'],
+                 ['f_juzgado','el juzgado o distrito judicial']];
+    return req.filter(r=> !val(r[0])).map(r=> r[1]);
+  }
   function generateWord(){
+    const falta = faltantes();
+    if(falta.length){
+      toast('Falta ' + falta[0] + (falta.length>1 ? ' y ' + (falta.length-1) + ' dato(s) más' : ''));
+      const primero = ['f_padre_nombre','f_madre_nombre','f_menor_nombre','f_juzgado'].find(id=> !val(id));
+      const panel = primero && $('#'+primero).closest('.gc-panel');
+      if(panel){ step = +panel.dataset.panel; refreshSteps(); setTimeout(()=> $('#'+primero).focus(), 350); }
+      return;
+    }
     ensureDocx(function(ok){
       if(!ok){ toast('No se pudo cargar el módulo de Word. Usa Imprimir / PDF.'); return; }
       const D = window.docx;
@@ -1242,7 +1303,9 @@
           center('ANEXO ÚNICO — DATOS PARA EL DEPÓSITO DE LA PENSIÓN', true, 22),
           P('Institución bancaria: ' + v('f_banco','[banco]'), {align:AlignmentType.LEFT, after:60}),
           P('Titular de la cuenta: ' + v('f_banco_titular','[titular]'), {align:AlignmentType.LEFT, after:60}),
-          P('CLABE interbancaria: ' + v('f_clabe','[18 dígitos]'), {align:AlignmentType.LEFT, after:60})
+          P('CLABE interbancaria: ' + v('f_clabe','[18 dígitos]') +
+            (val('f_clabe') && !clabeValida(val('f_clabe')) ? '   ⚠ REVISAR: el dígito verificador no corresponde' : ''),
+            {align:AlignmentType.LEFT, after:60})
         );
       }
 
@@ -1283,6 +1346,36 @@
   if(last) restore(last); else { sync(); render(); }
   calcUpdate(); clabeUpdate(); pensionLetraUpdate(); garantiaUpdate();
   refreshSteps();
+
+  /* ---------- PESTAÑAS Y BARRA FIJA (teléfono) ---------- */
+  var main = document.getElementById('gcMain');
+  function verVista(v){
+    if(!main) return;
+    main.classList.toggle('vista-doc', v === 'doc');
+    $$('.gc-tab').forEach(function(t){ t.classList.toggle('on', t.dataset.vista === v); });
+    var dm = $('#gcDocM');
+    if(dm) dm.textContent = (v === 'doc') ? '✎ Volver a capturar' : 'Ver documento';
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+  $$('.gc-tab').forEach(function(t){
+    t.addEventListener('click', function(){ verVista(t.dataset.vista); });
+  });
+  $('#gcDocM') && $('#gcDocM').addEventListener('click', function(){
+    verVista(main && main.classList.contains('vista-doc') ? 'captura' : 'doc');
+  });
+  $('#gcPrevM') && $('#gcPrevM').addEventListener('click', function(){ $('#gcPrev').click(); });
+  $('#gcNextM') && $('#gcNextM').addEventListener('click', function(){
+    var last = step === STEPS.length - 1;
+    (last ? $('#gcGenerate') : $('#gcNext')).click();
+  });
+  var _refresh = refreshSteps;
+  refreshSteps = function(){
+    _refresh();
+    var last = step === STEPS.length - 1, nm = $('#gcNextM'), pm = $('#gcPrevM');
+    if(nm){ nm.textContent = last ? '⬇ Descargar Word' : 'Siguiente →';
+            nm.classList.toggle('gc-btn-gold', last); nm.classList.toggle('gc-btn-primary', !last); }
+    if(pm) pm.style.visibility = step === 0 ? 'hidden' : 'visible';
+  };
 
   /* expuesto para pruebas automatizadas */
   window.__regutt = { pesosALetra, money, clabeValida, RFC_RE, CURP_RE, mensualizar };
