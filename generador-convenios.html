@@ -1,0 +1,1281 @@
+<!-- ============================================================
+     GENERADOR DE CONVENIOS FAMILIARES — Despacho Jurídico
+     Bloque HTML autocontenido para GoHighLevel
+     Todo (HTML+CSS+JS) en un solo archivo. Sin dependencias externas
+     salvo la librería docx (para generar Word), cargada por CDN.
+     ============================================================ -->
+<div id="genconv-root">
+<style>
+/* ====================== TOKENS / RESET ====================== */
+#genconv-root *{margin:0;padding:0;box-sizing:border-box}
+#genconv-root{
+  --ink:#12203a;          /* azul tinta profundo */
+  --ink-2:#2c3e63;
+  --paper:#f7f5ef;        /* papel legal cálido */
+  --paper-2:#efeadd;
+  --gold:#b08d3f;         /* dorado sello */
+  --gold-soft:#e8dcc0;
+  --line:#d9d2c2;
+  --white:#ffffff;
+  --green:#2f7d51;
+  --red:#b23b3b;
+  --shadow:0 10px 40px -12px rgba(18,32,58,.28);
+  --radius:16px;
+  --font-display:'Georgia','Times New Roman',serif;
+  --font-body:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  font-family:var(--font-body);
+  color:var(--ink);
+  line-height:1.55;
+  display:block;
+  width:100%;
+}
+#genconv-root button{font-family:inherit;cursor:pointer;border:none;background:none}
+#genconv-root input,#genconv-root select,#genconv-root textarea{font-family:inherit;font-size:15px;color:var(--ink)}
+
+/* ====================== V2: BARRA, CALC, IMPRESIÓN ====================== */
+.gc2-bar{margin:14px 0 6px;padding:12px 14px;background:#fff;border:1px solid var(--line);border-radius:12px}
+.gc2-bar-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.gc2-mini{font-size:12.5px;font-weight:700;padding:8px 12px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink)}
+.gc2-mini:hover{background:var(--paper-2)}
+.gc2-mini.danger{color:var(--red);border-color:#e7cccc}
+.gc2-select{font-size:12.5px;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:#fff;max-width:260px}
+.gc2-auto{font-size:11.5px;color:var(--green);margin-left:auto;font-weight:600}
+.gc2-details{margin-top:10px;border-top:1px dashed var(--line);padding-top:10px}
+.gc2-details summary{cursor:pointer;font-size:13px;font-weight:700;color:var(--ink-2)}
+.gc2-calc{background:var(--paper);border:1px solid var(--gold-soft);border-radius:12px;padding:14px;margin-bottom:16px}
+.gc2-calc-head{font-weight:800;font-size:13px;margin-bottom:8px}
+.gc2-calc-head span{font-weight:500;color:var(--gold);font-size:11.5px;margin-left:6px}
+.gc2-calc-out{font-size:13px;margin:8px 0;color:var(--ink-2)}
+.gc2-bad{color:var(--red);font-weight:700}
+.gc2-ok{color:var(--green);font-weight:700}
+.gc2-anexo{margin-top:18px;padding-top:12px;border-top:1px solid var(--line)}
+@media print{
+  body *{visibility:hidden !important}
+  #gcDoc, #gcDoc *{visibility:visible !important}
+  #gcDoc{position:absolute;left:0;top:0;width:100%;max-width:none;box-shadow:none;border:0;padding:0;font-size:12px}
+  .gc-doc-watermark{display:none !important}
+  .hl{background:none !important;font-weight:600}
+}
+
+/* ====================== SHELL ====================== */
+.gc-shell{
+  max-width:1180px;margin:0 auto;padding:28px 18px 64px;
+  background:
+    radial-gradient(1200px 500px at 80% -10%, rgba(176,141,63,.08), transparent 60%),
+    linear-gradient(180deg,#fbfaf6,#f3efe6);
+  border-radius:24px;
+}
+
+/* ====================== HERO ====================== */
+.gc-hero{
+  position:relative;overflow:hidden;
+  background:linear-gradient(135deg,var(--ink) 0%,#1b2f52 55%,#243b63 100%);
+  color:#f4f1e8;border-radius:20px;padding:40px 38px;
+  box-shadow:var(--shadow);
+}
+.gc-hero::before{
+  content:"";position:absolute;inset:0;
+  background-image:radial-gradient(circle at 1px 1px, rgba(255,255,255,.06) 1px, transparent 0);
+  background-size:22px 22px;opacity:.5;
+}
+.gc-hero::after{
+  content:"§";position:absolute;right:-10px;bottom:-40px;
+  font-family:var(--font-display);font-size:230px;color:rgba(232,220,192,.07);
+  line-height:1;pointer-events:none;
+}
+.gc-hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(232,220,192,.12);border:1px solid rgba(232,220,192,.28);
+  color:var(--gold-soft);font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+  padding:7px 14px;border-radius:100px;margin-bottom:20px;font-weight:600;
+  position:relative;z-index:1;
+}
+.gc-hero-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--gold);
+  box-shadow:0 0 0 0 rgba(176,141,63,.7);animation:pulse 2.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(176,141,63,.6)}70%{box-shadow:0 0 0 8px rgba(176,141,63,0)}100%{box-shadow:0 0 0 0 rgba(176,141,63,0)}}
+.gc-hero h1{
+  font-family:var(--font-display);font-weight:700;
+  font-size:clamp(28px,4.6vw,48px);line-height:1.05;letter-spacing:-.5px;
+  position:relative;z-index:1;max-width:16ch;
+}
+.gc-hero h1 em{color:var(--gold-soft);font-style:italic}
+.gc-hero p{
+  margin-top:16px;max-width:56ch;color:#d7dbe6;font-size:16px;position:relative;z-index:1;
+}
+.gc-hero-stats{display:flex;gap:30px;margin-top:26px;flex-wrap:wrap;position:relative;z-index:1}
+.gc-stat .n{font-family:var(--font-display);font-size:30px;font-weight:700;color:#fff}
+.gc-stat .l{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#9fb0cf}
+
+/* ====================== LAYOUT ====================== */
+.gc-main{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;margin-top:26px}
+@media(max-width:960px){.gc-main{grid-template-columns:1fr}}
+
+.gc-card{
+  background:var(--white);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:0 4px 24px -14px rgba(18,32,58,.25);overflow:hidden;
+}
+.gc-card-head{
+  padding:20px 24px;border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,#fff,#faf8f2);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.gc-card-head h2{font-family:var(--font-display);font-size:19px;font-weight:700;color:var(--ink)}
+.gc-card-head .sub{font-size:12.5px;color:#7b8496;margin-top:2px}
+
+/* ====================== STEPPER ====================== */
+.gc-steps{display:flex;gap:6px;padding:16px 24px 0;flex-wrap:wrap}
+.gc-step-pill{
+  display:flex;align-items:center;gap:8px;font-size:12.5px;color:#98a0b0;
+  padding:8px 12px;border-radius:100px;transition:.35s;font-weight:600;white-space:nowrap;
+}
+.gc-step-pill .num{
+  width:22px;height:22px;border-radius:50%;display:grid;place-items:center;
+  background:#e9e6dd;color:#98a0b0;font-size:12px;font-weight:700;transition:.35s;
+}
+.gc-step-pill.active{background:var(--ink);color:#fff}
+.gc-step-pill.active .num{background:var(--gold);color:#fff}
+.gc-step-pill.done{color:var(--green)}
+.gc-step-pill.done .num{background:var(--green);color:#fff}
+
+.gc-progress-track{height:4px;background:#ece8dd;border-radius:100px;margin:14px 24px 0;overflow:hidden}
+.gc-progress-bar{height:100%;width:0;background:linear-gradient(90deg,var(--gold),#d4b978);
+  border-radius:100px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+
+/* ====================== FORM ====================== */
+.gc-form{padding:22px 24px}
+.gc-panel{display:none;animation:fade .45s cubic-bezier(.4,0,.2,1)}
+.gc-panel.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.gc-panel-title{font-family:var(--font-display);font-size:16px;font-weight:700;margin-bottom:4px;color:var(--ink-2)}
+.gc-panel-note{font-size:13px;color:#7b8496;margin-bottom:18px;padding-bottom:14px;border-bottom:1px dashed var(--line)}
+
+.gc-field{margin-bottom:16px}
+.gc-field.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:560px){.gc-field.row{grid-template-columns:1fr}}
+.gc-label{display:block;font-size:12.5px;font-weight:600;color:var(--ink-2);margin-bottom:6px;letter-spacing:.01em}
+.gc-label .req{color:var(--red);margin-left:2px}
+.gc-input,.gc-select,.gc-textarea{
+  width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:10px;
+  background:#fdfcf9;transition:.2s;outline:none;
+}
+.gc-input:focus,.gc-select:focus,.gc-textarea:focus{
+  border-color:var(--gold);background:#fff;box-shadow:0 0 0 3px rgba(176,141,63,.14)
+}
+.gc-textarea{resize:vertical;min-height:70px}
+.gc-hint{font-size:11.5px;color:#98a0b0;margin-top:5px}
+
+.gc-group-title{
+  display:flex;align-items:center;gap:10px;margin:22px 0 12px;
+  font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--gold);
+}
+.gc-group-title::after{content:"";flex:1;height:1px;background:var(--line)}
+
+/* toggle chips */
+.gc-chips{display:flex;gap:8px;flex-wrap:wrap}
+.gc-chip{
+  padding:9px 14px;border:1.5px solid var(--line);border-radius:100px;font-size:13px;
+  background:#fdfcf9;color:var(--ink-2);transition:.2s;font-weight:600;
+}
+.gc-chip:hover{border-color:var(--gold)}
+.gc-chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+/* ====================== NAV BUTTONS ====================== */
+.gc-nav{display:flex;justify-content:space-between;gap:12px;padding:18px 24px 4px;border-top:1px solid var(--line)}
+.gc-btn{
+  padding:12px 22px;border-radius:100px;font-size:14px;font-weight:700;transition:.25s;
+  display:inline-flex;align-items:center;gap:8px;
+}
+.gc-btn-primary{background:var(--ink);color:#fff}
+.gc-btn-primary:hover{background:#1b2f52;transform:translateY(-1px);box-shadow:0 8px 20px -8px rgba(18,32,58,.5)}
+.gc-btn-ghost{background:transparent;color:var(--ink-2);border:1.5px solid var(--line)}
+.gc-btn-ghost:hover{border-color:var(--ink-2)}
+.gc-btn-gold{background:linear-gradient(135deg,var(--gold),#c9a54e);color:#fff}
+.gc-btn-gold:hover{transform:translateY(-1px);box-shadow:0 10px 24px -8px rgba(176,141,63,.6)}
+.gc-btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+
+/* ====================== PREVIEW ====================== */
+.gc-preview-wrap{position:sticky;top:16px}
+.gc-doc-scroll{
+  max-height:640px;overflow-y:auto;padding:0;background:var(--paper-2);
+  border-radius:0 0 var(--radius) var(--radius);
+}
+.gc-doc-scroll::-webkit-scrollbar{width:10px}
+.gc-doc-scroll::-webkit-scrollbar-thumb{background:#c9c0ab;border-radius:100px;border:3px solid var(--paper-2)}
+.gc-doc{
+  background:#fff;margin:18px;padding:38px 40px;border-radius:6px;
+  box-shadow:0 6px 30px -8px rgba(18,32,58,.2);
+  font-family:var(--font-display);font-size:12.5px;line-height:1.7;color:#1a1a1a;
+  min-height:400px;position:relative;
+}
+.gc-doc::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:5px;
+  background:linear-gradient(90deg,var(--ink),var(--gold),var(--ink));border-radius:6px 6px 0 0;
+}
+.gc-doc h3{text-align:center;font-size:15px;font-weight:700;margin-bottom:4px;letter-spacing:.3px;text-transform:uppercase}
+.gc-doc .doc-sub{text-align:center;font-size:11px;font-style:italic;color:#666;margin-bottom:18px}
+.gc-doc .doc-parties{text-align:center;margin:14px 0;font-size:13px}
+.gc-doc .doc-parties strong{display:block;font-size:14px;margin:3px 0}
+.gc-doc .doc-rule{height:1px;background:#ddd;margin:16px 0}
+.gc-doc .doc-clause{margin:12px 0}
+.gc-doc .doc-clause b{color:var(--ink)}
+.gc-doc .hl{background:linear-gradient(transparent 60%,rgba(176,141,63,.32) 0);font-weight:600;padding:0 1px}
+.gc-doc .doc-empty{color:#c9c0ab;font-style:italic}
+.gc-doc-watermark{
+  position:absolute;top:44%;left:50%;transform:translate(-50%,-50%) rotate(-24deg);
+  font-size:52px;font-weight:800;color:rgba(18,32,58,.05);letter-spacing:6px;
+  pointer-events:none;text-transform:uppercase;white-space:nowrap;
+}
+
+.gc-preview-toolbar{
+  display:flex;gap:8px;padding:14px 20px;border-top:1px solid var(--line);
+  background:#faf8f2;flex-wrap:wrap;
+}
+
+/* ====================== FEATURES STRIP ====================== */
+.gc-feats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:26px}
+@media(max-width:840px){.gc-feats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:460px){.gc-feats{grid-template-columns:1fr}}
+.gc-feat{
+  background:var(--white);border:1px solid var(--line);border-radius:14px;padding:18px;
+  transition:.3s;position:relative;overflow:hidden;
+}
+.gc-feat:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--gold-soft)}
+.gc-feat .ic{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--paper),var(--gold-soft));font-size:19px;margin-bottom:12px}
+.gc-feat h4{font-size:14px;font-weight:700;margin-bottom:4px;color:var(--ink)}
+.gc-feat p{font-size:12.5px;color:#7b8496;line-height:1.5}
+
+/* ====================== TOAST ====================== */
+.gc-toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120px);
+  background:var(--ink);color:#fff;padding:14px 22px;border-radius:100px;font-size:14px;font-weight:600;
+  box-shadow:var(--shadow);z-index:9999;transition:.4s cubic-bezier(.4,0,.2,1);display:flex;align-items:center;gap:10px;
+}
+.gc-toast.show{transform:translateX(-50%) translateY(0)}
+.gc-toast .check{width:20px;height:20px;border-radius:50%;background:var(--green);display:grid;place-items:center;font-size:12px}
+
+/* footer note */
+.gc-foot{margin-top:28px;text-align:center;font-size:12px;color:#98a0b0;line-height:1.6}
+.gc-foot b{color:var(--ink-2)}
+</style>
+
+<div class="gc-shell">
+
+  <!-- HERO -->
+  <div class="gc-hero">
+    <span class="gc-hero-badge"><span class="dot"></span> Despacho Jurídico · Cadereyta de Montes, Qro.</span>
+    <h1>Genera convenios familiares <em>en minutos</em>, no en horas.</h1>
+    <p>Plataforma interna para redactar convenios de custodia, convivencia, pensión alimenticia y divorcio con formato de juzgado. Llena el asistente, revisa la vista previa en vivo y descarga el documento listo para firma y presentación.</p>
+    <div class="gc-hero-stats">
+      <div class="gc-stat"><div class="n" data-count="18">0</div><div class="l">Cláusulas automáticas</div></div>
+      <div class="gc-stat"><div class="n" data-count="5">0</div><div class="l">Minutos por convenio</div></div>
+      <div class="gc-stat"><div class="n">100%</div><div class="l">Formato de juzgado</div></div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="gc-main">
+
+    <!-- LEFT: WIZARD -->
+    <div class="gc-card">
+      <div class="gc-card-head">
+        <div>
+          <h2>Asistente de captura</h2>
+          <div class="sub">Completa cada paso — la vista previa se actualiza sola</div>
+        </div>
+      </div>
+
+      <div class="gc-steps" id="gcSteps"></div>
+      <div class="gc-progress-track"><div class="gc-progress-bar" id="gcBar"></div></div>
+
+      <!-- ===== BARRA DE CASOS Y DESPACHO (v2) ===== -->
+      <div class="gc2-bar">
+        <div class="gc2-bar-row">
+          <button type="button" class="gc2-mini" id="gc2NewCase">+ Caso nuevo</button>
+          <select class="gc2-select" id="gc2Cases"><option value="">— Casos guardados —</option></select>
+          <button type="button" class="gc2-mini" id="gc2Save">Guardar</button>
+          <button type="button" class="gc2-mini danger" id="gc2Del">Borrar</button>
+          <span class="gc2-auto" id="gc2Auto">Autoguardado activo</span>
+        </div>
+        <details class="gc2-details">
+          <summary>Datos del despacho (membrete del documento)</summary>
+          <div class="gc-field row" style="margin-top:10px">
+            <div>
+              <label class="gc-label">Despacho</label>
+              <input class="gc-input" id="f_desp_nombre" value="REGUTT S.C." data-live>
+            </div>
+            <div>
+              <label class="gc-label">Abogado responsable</label>
+              <input class="gc-input" id="f_desp_abogado" placeholder="M. en D. Omar Ocampo Moreno" data-live>
+            </div>
+          </div>
+          <div class="gc-field row">
+            <div>
+              <label class="gc-label">Cédula profesional</label>
+              <input class="gc-input" id="f_desp_cedula" placeholder="0000000" data-live>
+            </div>
+            <div>
+              <label class="gc-label">Domicilio para oír notificaciones</label>
+              <input class="gc-input" id="f_desp_dom" placeholder="Calle, número, colonia, Cadereyta de Montes, Qro." data-live>
+            </div>
+          </div>
+          <div class="gc-field">
+            <label class="gc-label">Marco procesal aplicable</label>
+            <div class="gc-chips" id="gcMarco">
+              <button type="button" class="gc-chip on" data-marco="cnpcyf">CNPCyF (arts. 587-596)</button>
+              <button type="button" class="gc-chip" data-marco="cpc">CPC Qro (arts. 711-719)</button>
+            </div>
+            <div class="gc-hint">El CNPCyF sustituye al CPC del Estado en jurisdicción voluntaria a partir de su entrada en vigor en Querétaro (septiembre 2026). Verifica la fecha vigente en La Sombra de Arteaga antes de presentar.</div>
+          </div>
+        </details>
+      </div>
+
+
+      <div class="gc-form">
+
+        <!-- PANEL 0: Tipo -->
+        <div class="gc-panel active" data-panel="0">
+          <div class="gc-panel-title">Tipo de documento</div>
+          <div class="gc-panel-note">Elige el convenio a generar. Puedes agregar más plantillas después.</div>
+          <div class="gc-chips" id="gcDocType">
+            <button type="button" class="gc-chip on" data-doc="custodia">Convenio de custodia y convivencia</button>
+            <button type="button" class="gc-chip" data-doc="divorcio">Divorcio por mutuo consentimiento</button>
+            <button type="button" class="gc-chip" data-doc="pension">Convenio de pensión alimenticia</button>
+          </div>
+
+          <div class="gc-group-title">Juzgado / Jurisdicción</div>
+          <div class="gc-field row">
+            <div>
+              <label class="gc-label">Entidad / Distrito judicial</label>
+              <input class="gc-input" id="f_juzgado" placeholder="Cadereyta de Montes, Querétaro" value="Cadereyta de Montes, Querétaro">
+            </div>
+            <div>
+              <label class="gc-label">Número de expediente (opcional)</label>
+              <input class="gc-input" id="f_expediente" placeholder="Ej. 898/2025-E">
+            </div>
+          </div>
+        </div>
+
+        <!-- PANEL 1: Padres -->
+        <div class="gc-panel" data-panel="1">
+          <div class="gc-panel-title">Datos de los progenitores</div>
+          <div class="gc-panel-note">Nombres completos y datos generales de ambas partes.</div>
+
+          <div class="gc-group-title">Parte solicitante (Padre / Promovente)</div>
+          <div class="gc-field">
+            <label class="gc-label">Nombre completo <span class="req">*</span></label>
+            <input class="gc-input" id="f_padre_nombre" placeholder="VÍCTOR ZAEL GÓMEZ CABRERA" data-live>
+          </div>
+          <div class="gc-field row">
+            <div>
+              <label class="gc-label">Nacionalidad</label>
+              <input class="gc-input" id="f_padre_nac" placeholder="Estadounidense" data-live>
+            </div>
+            <div>
+              <label class="gc-label">Ocupación / Ingreso mensual aprox.</label>
+              <input class="gc-input" id="f_padre_ingreso" placeholder="$40,000 MXN" data-live>
+            </div>
+          </div>
+          <div class="gc-field">
+            <label class="gc-label">Domicilio</label>
+            <input class="gc-input" id="f_padre_dom" placeholder="Calle, número, colonia, ciudad" data-live>
+          </div>
+
+          <div class="gc-group-title">Parte complementaria (Madre)</div>
+          <div class="gc-field">
+            <label class="gc-label">Nombre completo <span class="req">*</span></label>
+            <input class="gc-input" id="f_madre_nombre" placeholder="MARGARITA ROSA MARTÍNEZ PATIÑO" data-live>
+          </div>
+          <div class="gc-field row">
+            <div>
+              <label class="gc-label">Nacionalidad</label>
+              <input class="gc-input" id="f_madre_nac" placeholder="Colombiana" data-live>
+            </div>
+            <div>
+              <label class="gc-label">Ocupación / Ingreso mensual aprox.</label>
+              <input class="gc-input" id="f_madre_ingreso" placeholder="$15,000–25,000 MXN" data-live>
+            </div>
+          </div>
+          <div class="gc-field">
+            <label class="gc-label">Domicilio</label>
+            <input class="gc-input" id="f_madre_dom" placeholder="Calle, número, colonia, ciudad" data-live>
+          </div>
+        </div>
+
+        <!-- PANEL 2: Menor -->
+        <div class="gc-panel" data-panel="2">
+          <div class="gc-panel-title">Datos del menor</div>
+          <div class="gc-panel-note">Información de la niña, niño o adolescente sujeto del convenio.</div>
+          <div class="gc-field">
+            <label class="gc-label">Nombre completo del menor <span class="req">*</span></label>
+            <input class="gc-input" id="f_menor_nombre" placeholder="ALMA VICTORIA GÓMEZ MARTÍNEZ" data-live>
+          </div>
+          <div class="gc-field row">
+            <div>
+              <label class="gc-label">Lugar de nacimiento</label>
+              <input class="gc-input" id="f_menor_lugar" placeholder="Colombia" data-live>
+            </div>
+            <div>
+              <label class="gc-label">Reside desde (fecha)</label>
+              <input class="gc-input" id="f_menor_reside" placeholder="Mayo 2025" data-live>
+            </div>
+          </div>
+          <div class="gc-field row">
+            <div>
+              <label class="gc-label">Escuela actual</label>
+              <input class="gc-input" id="f_menor_escuela" placeholder="Colegio María Montessori" data-live>
+            </div>
+            <div>
+              <label class="gc-label">Ciudad de residencia habitual</label>
+              <input class="gc-input" id="f_menor_ciudad" placeholder="Ciudad de México" data-live>
+            </div>
+          </div>
+          <div class="gc-field">
+            <label class="gc-label">Domicilio de depósito (con quién vive)</label>
+            <input class="gc-input" id="f_menor_deposito" placeholder="Domicilio de la madre" data-live>
+          </div>
+        </div>
+
+        <!-- PANEL 3: Custodia y convivencia -->
+        <div class="gc-panel" data-panel="3">
+          <div class="gc-panel-title">Custodia y régimen de convivencia</div>
+          <div class="gc-panel-note">Define cómo se reparte el tiempo con el menor.</div>
+
+          <div class="gc-field">
+            <label class="gc-label">Tipo de custodia</label>
+            <div class="gc-chips" id="gcCustodia">
+              <button type="button" class="gc-chip on" data-cust="compartida">Compartida</button>
+              <button type="button" class="gc-chip" data-cust="madre">Custodia a la madre</button>
+              <button type="button" class="gc-chip" data-cust="padre">Custodia al padre</button>
+            </div>
+            <div class="gc-hint">La patria potestad se mantiene conjunta en todos los casos.</div>
+          </div>
+
+          <div class="gc-field">
+            <label class="gc-label">Convivencia entre semana</label>
+            <input class="gc-input" id="f_conv_semana" placeholder="Martes y jueves de 15:00 a 20:00 hrs" data-live>
+          </div>
+          <div class="gc-field">
+            <label class="gc-label">Convivencia de fin de semana</label>
+            <input class="gc-input" id="f_conv_finde" placeholder="Fines alternados: viernes 17:00 a domingo 18:00" data-live>
+          </div>
+          <div class="gc-field row">
+            <div>
+              <label class="gc-label">Vacaciones de verano</label>
+              <input class="gc-input" id="f_vac_verano" placeholder="50/50 o 2 semanas con el padre" data-live>
+            </div>
+            <div>
+              <label class="gc-label">Vacaciones de diciembre</label>
+              <input class="gc-input" id="f_vac_dic" placeholder="24 con madre / 31 con padre" data-live>
+            </div>
+          </div>
+          <div class="gc-field">
+            <label class="gc-label">Viajes internacionales</label>
+            <div class="gc-chips" id="gcViajes">
+              <button type="button" class="gc-chip on" data-viaje="si">Permitidos con autorización escrita</button>
+              <button type="button" class="gc-chip" data-viaje="no">Restringidos</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANEL 4: Pensión -->
+        <div class="gc-panel" data-panel="4">
+          <div class="gc-panel-title">Pensión alimenticia y gastos</div>
+          <div class="gc-panel-note">Montos exactos en pesos mexicanos. El juzgado no admite rangos ni cantidades aproximadas.</div>
+
+          <div class="gc2-calc" id="gc2Calc">
+            <div class="gc2-calc-head">Calculadora de proporcionalidad <span>art. 296 CC Qro</span></div>
+            <div class="gc-field row">
+              <div>
+                <label class="gc-label">Ingreso mensual neto del deudor alimentario (MXN)</label>
+                <input class="gc-input" id="f_calc_ingreso" type="number" min="0" step="100" placeholder="40000">
+              </div>
+              <div>
+                <label class="gc-label">Porcentaje aplicable</label>
+                <input class="gc-input" id="f_calc_pct" type="number" min="1" max="100" step="1" value="25">
+              </div>
+            </div>
+            <div class="gc2-calc-out" id="gc2CalcOut">Captura el ingreso para ver la sugerencia.</div>
+            <button type="button" class="gc2-mini" id="gc2CalcApply">Usar este monto</button>
+          </div>
+
+          <div class="gc-group-title">Pensión alimenticia</div>
+          <div class="gc-field row">
+            <div>
+              <label class="gc-label">Monto exacto en pesos <span class="req">*</span></label>
+              <input class="gc-input" id="f_pension_monto" type="number" min="0" step="0.01" placeholder="5000" data-live>
+              <div class="gc-hint" id="gc2PensionLetra">Se escribirá en número y letra automáticamente.</div>
+            </div>
+            <div>
+              <label class="gc-label">Periodicidad</label>
+              <select class="gc-input" id="f_pension_periodo" data-live>
+                <option value="semanal">Semanal</option>
+                <option value="quincenal">Quincenal</option>
+                <option value="mensual" selected>Mensual</option>
+              </select>
+            </div>
+          </div>
+          <div class="gc-field row">
+            <div>
+              <label class="gc-label">Día exacto de entrega <span class="req">*</span></label>
+              <input class="gc-input" id="f_pension_dia" placeholder="los días 5 de cada mes" data-live>
+              <div class="gc-hint">Escribe el día, no un plazo abierto. Ej.: «los días 1 y 16 de cada mes».</div>
+            </div>
+            <div>
+              <label class="gc-label">Modalidad de pago</label>
+              <div class="gc-chips" id="gcModalidad">
+                <button type="button" class="gc-chip on" data-modal="transferencia">Transferencia</button>
+                <button type="button" class="gc-chip" data-modal="efectivo">Efectivo</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="gc2Banco">
+            <div class="gc-group-title">Datos bancarios para el depósito (anexo del convenio)</div>
+            <div class="gc-field row">
+              <div>
+                <label class="gc-label">Institución bancaria</label>
+                <input class="gc-input" id="f_banco" placeholder="BBVA México" data-live>
+              </div>
+              <div>
+                <label class="gc-label">Titular de la cuenta</label>
+                <input class="gc-input" id="f_banco_titular" placeholder="Nombre completo del titular" data-live>
+              </div>
+            </div>
+            <div class="gc-field">
+              <label class="gc-label">CLABE interbancaria (18 dígitos)</label>
+              <input class="gc-input" id="f_clabe" inputmode="numeric" maxlength="18" placeholder="012680012345678901" data-live>
+              <div class="gc-hint" id="gc2ClabeMsg">Se valida el dígito verificador.</div>
+            </div>
+          </div>
+
+          <div class="gc-group-title">Gastos escolares a cargo del deudor alimentario</div>
+          <div class="gc-field row">
+            <div>
+              <label class="gc-label">Colegiatura mensual (MXN)</label>
+              <input class="gc-input" id="f_colegiatura" type="number" min="0" step="0.01" placeholder="9700" data-live>
+            </div>
+            <div>
+              <label class="gc-label">Inscripción anual (MXN)</label>
+              <input class="gc-input" id="f_matricula" type="number" min="0" step="0.01" placeholder="10000" data-live>
+            </div>
+          </div>
+          <div class="gc-field">
+            <label class="gc-label">Actividades extracurriculares</label>
+            <input class="gc-input" id="f_extra" placeholder="Natación, monto mensual exacto" data-live>
+          </div>
+
+          <div class="gc-group-title">A cargo del otro progenitor</div>
+          <div class="gc-field">
+            <label class="gc-label">Gastos que cubre</label>
+            <input class="gc-input" id="f_madre_gastos" placeholder="Ropa, calzado y útiles escolares" data-live>
+          </div>
+
+          <div class="gc-group-title">Gastos compartidos y garantía</div>
+          <div class="gc-field row">
+            <div>
+              <label class="gc-label">Gastos médicos extraordinarios</label>
+              <input class="gc-input" id="f_medicos" placeholder="50% cada progenitor" data-live>
+            </div>
+            <div>
+              <label class="gc-label">Garantía: meses de pensión (arts. 631 y 632 CC Qro)</label>
+              <input class="gc-input" id="f_garantia_meses" type="number" min="0" step="1" placeholder="3" data-live>
+              <div class="gc-hint" id="gc2GarantiaOut">El monto se calcula solo.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANEL 5: Revisión -->
+        <div class="gc-panel" data-panel="5">
+          <div class="gc-panel-title">Revisión final</div>
+          <div class="gc-panel-note">Verifica los datos capturados antes de generar el documento.</div>
+          <div id="gcReview" style="font-size:13px;line-height:1.9"></div>
+        </div>
+
+        <!-- NAV -->
+        <div class="gc-nav">
+          <button class="gc-btn gc-btn-ghost" id="gcPrev">← Anterior</button>
+          <button class="gc-btn gc-btn-primary" id="gcNext">Siguiente →</button>
+          <button class="gc-btn gc-btn-gold" id="gcGenerate" style="display:none">⬇ Descargar convenio (Word)</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: PREVIEW -->
+    <div class="gc-card gc-preview-wrap">
+      <div class="gc-card-head">
+        <div>
+          <h2>Vista previa en vivo</h2>
+          <div class="sub">Documento con formato de juzgado</div>
+        </div>
+        <span class="gc-hero-badge" style="background:var(--paper-2);border-color:var(--gold-soft);color:var(--gold);margin:0">Borrador</span>
+      </div>
+      <div class="gc-doc-scroll">
+        <div class="gc-doc" id="gcDoc">
+          <div class="gc-doc-watermark">Borrador</div>
+          <!-- rendered by JS -->
+        </div>
+      </div>
+      <div class="gc-preview-toolbar">
+        <button class="gc-btn gc-btn-ghost" id="gcPrint" style="padding:9px 16px;font-size:13px">🖨 Imprimir / PDF</button>
+        <button class="gc-btn gc-btn-gold" id="gcGenerate2" style="padding:9px 16px;font-size:13px">⬇ Descargar Word</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <div class="gc-feats">
+    <div class="gc-feat"><div class="ic">⚖️</div><h4>Formato de juzgado</h4><p>Cláusulas redactadas conforme al Código Civil y de Procedimientos Civiles del Estado.</p></div>
+    <div class="gc-feat"><div class="ic">⚡</div><h4>5 minutos por caso</h4><p>Lo que antes tomaba horas de copiar y editar, ahora es llenar un asistente guiado.</p></div>
+    <div class="gc-feat"><div class="ic">🛡️</div><h4>Sin errores de arrastre</h4><p>Se acabó el nombre del caso anterior pegado por error. Cada campo se sustituye limpio.</p></div>
+    <div class="gc-feat"><div class="ic">📄</div><h4>Word + PDF</h4><p>Descarga editable en Word o imprime directo a PDF, listo para firma y presentación.</p></div>
+  </div>
+
+  <div class="gc-foot">
+    <b>Generador de Convenios Familiares</b> — Herramienta interna del despacho · Cadereyta de Montes, Querétaro<br>
+    El documento generado es un borrador de trabajo. Requiere revisión del abogado responsable antes de su presentación o ratificación.
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="gc-toast" id="gcToast"><span class="check">✓</span><span id="gcToastMsg">Documento generado</span></div>
+</div>
+
+<!-- Librería docx para generar Word (con respaldo en jsDelivr si cdnjs falla) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.5.0/docx.js"></script>
+<script>
+/* ============================================================
+   MOTOR v2 — Generador de convenios REGUTT
+   Cambios frente a v1:
+   - Importes en número y letra (exigencia del juzgado)
+   - Estructura de escrito judicial antes de las cláusulas
+   - Pensión con monto exacto, día y modalidad; anexo bancario
+   - CLABE validada con dígito verificador; RFC y CURP
+   - Autoguardado y lista de casos en el navegador del abogado
+   - Arts. 631 y 632 en lugar del 302
+   - Impresión sin ventana emergente (funciona en iOS)
+   - Respaldo de CDN para la librería de Word
+   ============================================================ */
+(function(){
+  "use strict";
+  const $  = (s,r)=> (r||document).querySelector(s);
+  const $$ = (s,r)=> Array.prototype.slice.call((r||document).querySelectorAll(s));
+  const root = $('#genconv-root');
+
+  /* ---------- ESTADO ---------- */
+  const STEPS = ["Tipo","Progenitores","Menor","Custodia","Pensión","Revisar"];
+  let step = 0;
+  const state = { doc:"custodia", custodia:"compartida", viaje:"si", modal:"transferencia", marco:"cnpcyf" };
+
+  /* ---------- NÚMEROS A LETRA ---------- */
+  const UNI = ['','UNO','DOS','TRES','CUATRO','CINCO','SEIS','SIETE','OCHO','NUEVE','DIEZ',
+    'ONCE','DOCE','TRECE','CATORCE','QUINCE','DIECISÉIS','DIECISIETE','DIECIOCHO','DIECINUEVE',
+    'VEINTE','VEINTIUNO','VEINTIDÓS','VEINTITRÉS','VEINTICUATRO','VEINTICINCO','VEINTISÉIS',
+    'VEINTISIETE','VEINTIOCHO','VEINTINUEVE'];
+  const DEC = ['','','','TREINTA','CUARENTA','CINCUENTA','SESENTA','SETENTA','OCHENTA','NOVENTA'];
+  const CEN = ['','CIENTO','DOSCIENTOS','TRESCIENTOS','CUATROCIENTOS','QUINIENTOS','SEISCIENTOS',
+    'SETECIENTOS','OCHOCIENTOS','NOVECIENTOS'];
+
+  function centenas(n){            // 0..999
+    if(n === 0) return '';
+    if(n === 100) return 'CIEN';
+    let t = '';
+    const c = Math.floor(n/100), r = n%100;
+    if(c) t = CEN[c];
+    if(r){
+      if(t) t += ' ';
+      if(r < 30) t += UNI[r];
+      else {
+        const d = Math.floor(r/10), u = r%10;
+        t += DEC[d] + (u ? ' Y ' + UNI[u] : '');
+      }
+    }
+    return t;
+  }
+  function miles(n){               // 0..999999
+    const m = Math.floor(n/1000), r = n%1000;
+    if(!m) return centenas(r);
+    // En documentos legales mexicanos se escribe "UN MIL", no "MIL"
+    const pre = (m === 1) ? 'UN MIL' : centenas(m) + ' MIL';
+    return pre + (r ? ' ' + centenas(r) : '');
+  }
+  function enteroALetra(n){
+    if(n === 0) return 'CERO';
+    const mill = Math.floor(n/1000000), r = n%1000000;
+    if(!mill) return miles(r);
+    const pre = (mill === 1) ? 'UN MILLÓN' : miles(mill) + ' MILLONES';
+    return pre + (r ? ' ' + miles(r) : '');
+  }
+  /** 5000 -> "CINCO MIL PESOS 00/100 M.N." */
+  function pesosALetra(valor){
+    const n = Math.round(Math.abs(Number(valor) || 0) * 100);
+    const ent = Math.floor(n/100), cts = n%100;
+    return enteroALetra(ent) + ' PESOS ' + String(cts).padStart(2,'0') + '/100 M.N.';
+  }
+  function fmtPesos(valor){
+    const n = Number(valor) || 0;
+    return '$' + n.toLocaleString('es-MX',{minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+  /** Lo que exige el juzgado: número y letra juntos. */
+  function money(valor, vacio){
+    const raw = String(valor == null ? '' : valor).replace(/[^0-9.]/g,'');
+    if(raw === '' || isNaN(Number(raw))) return vacio || '[monto]';
+    return fmtPesos(raw) + ' (' + pesosALetra(raw) + ')';
+  }
+
+  /* ---------- VALIDADORES ---------- */
+  function clabeValida(c){
+    const s = String(c||'').replace(/\D/g,'');
+    if(s.length !== 18) return false;
+    const pesos = [3,7,1];
+    let suma = 0;
+    for(let i=0;i<17;i++) suma += (Number(s[i]) * pesos[i%3]) % 10;
+    return ((10 - (suma % 10)) % 10) === Number(s[17]);
+  }
+  const RFC_RE  = /^([A-ZÑ&]{3,4})\d{6}([A-Z\d]{3})$/i;
+  const CURP_RE = /^[A-Z][AEIOUX][A-Z]{2}\d{6}[HM][A-Z]{5}[A-Z\d]\d$/i;
+
+  /* ---------- CAMPOS ---------- */
+  const val = id => { const el = $('#'+id); return el ? String(el.value||'').trim() : ''; };
+  const num = id => { const v = val(id).replace(/[^0-9.]/g,''); return v === '' ? null : Number(v); };
+
+  /* ---------- STEPPER ---------- */
+  const stepsEl = $('#gcSteps');
+  stepsEl.innerHTML = STEPS.map((s,i)=>
+    `<div class="gc-step-pill ${i===0?'active':''}" data-i="${i}">
+       <span class="num">${i+1}</span><span>${s}</span>
+     </div>`).join('');
+
+  function refreshSteps(){
+    $$('.gc-step-pill').forEach((p,i)=>{
+      p.classList.toggle('active', i===step);
+      p.classList.toggle('done', i<step);
+      p.querySelector('.num').textContent = i<step ? '✓' : (i+1);
+    });
+    $('#gcBar').style.width = ((step)/(STEPS.length-1))*100 + '%';
+    $$('.gc-panel').forEach(p=> p.classList.toggle('active', +p.dataset.panel===step));
+    $('#gcPrev').style.visibility = step===0 ? 'hidden':'visible';
+    const last = step===STEPS.length-1;
+    $('#gcNext').style.display = last ? 'none':'inline-flex';
+    $('#gcGenerate').style.display = last ? 'inline-flex':'none';
+    if(last) buildReview();
+    root.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+  stepsEl.addEventListener('click', e=>{
+    const pill = e.target.closest('.gc-step-pill'); if(!pill) return;
+    step = +pill.dataset.i; refreshSteps();
+  });
+  $('#gcNext').addEventListener('click', ()=>{ if(step<STEPS.length-1){step++;refreshSteps();} });
+  $('#gcPrev').addEventListener('click', ()=>{ if(step>0){step--;refreshSteps();} });
+
+  /* ---------- CHIPS ---------- */
+  function chipGroup(containerId, key){
+    const cont = $(containerId); if(!cont) return;
+    cont.addEventListener('click', e=>{
+      const c = e.target.closest('.gc-chip'); if(!c) return;
+      $$('.gc-chip', cont).forEach(x=>x.classList.remove('on'));
+      c.classList.add('on');
+      state[key] = c.dataset[Object.keys(c.dataset)[0]];
+      sync(); render(); save();
+    });
+  }
+  chipGroup('#gcDocType','doc');
+  chipGroup('#gcCustodia','custodia');
+  chipGroup('#gcViajes','viaje');
+  chipGroup('#gcModalidad','modal');
+  chipGroup('#gcMarco','marco');
+
+  /* ---------- HELPERS DE PREVIEW ---------- */
+  function esc(s){ return String(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+  function g(id, fallback){ const v=val(id); return v? `<span class="hl">${esc(v)}</span>` : `<span class="doc-empty">${fallback}</span>`; }
+  function gm(id, fallback){ const v=val(id); return v? `<span class="hl">${esc(money(v))}</span>` : `<span class="doc-empty">${fallback}</span>`; }
+  function plain(id, fb){ return val(id) || fb; }
+  function mplain(id, fb){ const v=val(id); return v ? money(v) : (fb||'[monto]'); }
+
+  const docTitles = {
+    custodia:"CONVENIO DE PATRIA POTESTAD, GUARDA Y CUSTODIA, CONVIVENCIAS Y PENSIÓN ALIMENTICIA",
+    divorcio:"CONVENIO DE DIVORCIO POR MUTUO CONSENTIMIENTO",
+    pension:"CONVENIO DE PENSIÓN ALIMENTICIA"
+  };
+  const tramiteTxt = {
+    custodia:"JURISDICCIÓN VOLUNTARIA — CONVENIO DE GUARDA Y CUSTODIA",
+    divorcio:"DIVORCIO POR MUTUO CONSENTIMIENTO",
+    pension:"JURISDICCIÓN VOLUNTARIA — CONVENIO DE PENSIÓN ALIMENTICIA"
+  };
+  const custodiaTxt = {
+    compartida:"custodia compartida, ejerciendo ambos progenitores la patria potestad de forma conjunta",
+    madre:"guarda y custodia a favor de la madre, conservando ambos progenitores la patria potestad",
+    padre:"guarda y custodia a favor del padre, conservando ambos progenitores la patria potestad"
+  };
+  const periodoTxt = { semanal:'semanal', quincenal:'quincenal', mensual:'mensual' };
+
+  /** Marco procesal: cambia con la entrada en vigor del CNPCyF. */
+  function marcoProcesal(){
+    return state.marco === 'cnpcyf'
+      ? 'los artículos 587 a 596 del Código Nacional de Procedimientos Civiles y Familiares'
+      : 'los artículos 711 a 719 del Código de Procedimientos Civiles del Estado de Querétaro';
+  }
+
+  /* ---------- CÁLCULOS ---------- */
+  function mensualizar(monto, periodo){
+    const n = Number(monto)||0;
+    if(periodo === 'semanal')   return n * 52 / 12;
+    if(periodo === 'quincenal') return n * 24 / 12;
+    return n;
+  }
+  function garantiaMonto(){
+    const meses = num('f_garantia_meses');
+    if(!meses) return null;
+    return mensualizar(num('f_pension_monto')||0, val('f_pension_periodo')||'mensual') * meses;
+  }
+
+  function calcUpdate(){
+    const out = $('#gc2CalcOut'); if(!out) return;
+    const ing = num('f_calc_ingreso'), pct = num('f_calc_pct');
+    if(!ing || !pct){ out.textContent = 'Captura el ingreso para ver la sugerencia.'; return; }
+    const m = ing * pct / 100;
+    out.innerHTML = `Sugerencia mensual: <b>${money(m)}</b><br>
+      <span style="font-size:11.5px">Equivale a ${fmtPesos(m*12/52)} semanales o ${fmtPesos(m*12/24)} quincenales.
+      La proporcionalidad del art. 296 CC Qro atiende a la posibilidad de quien debe darlos y a la necesidad de quien los recibe: este número es un punto de partida, no una regla.</span>`;
+    out.dataset.monto = String(Math.round(m*100)/100);
+  }
+  function clabeUpdate(){
+    const el = $('#f_clabe'), msg = $('#gc2ClabeMsg'); if(!el||!msg) return;
+    const v = el.value.replace(/\D/g,'');
+    if(!v){ msg.className='gc-hint'; msg.textContent='Se valida el dígito verificador.'; return; }
+    if(v.length !== 18){ msg.className='gc-hint gc2-bad'; msg.textContent=`Van ${v.length} de 18 dígitos.`; return; }
+    if(clabeValida(v)){ msg.className='gc-hint gc2-ok'; msg.textContent='CLABE válida ✓'; }
+    else { msg.className='gc-hint gc2-bad'; msg.textContent='El dígito verificador no corresponde. Revisa la CLABE.'; }
+  }
+  function pensionLetraUpdate(){
+    const el = $('#gc2PensionLetra'); if(!el) return;
+    const v = num('f_pension_monto');
+    el.textContent = v ? money(v) : 'Se escribirá en número y letra automáticamente.';
+  }
+  function garantiaUpdate(){
+    const el = $('#gc2GarantiaOut'); if(!el) return;
+    const m = garantiaMonto();
+    el.textContent = m ? 'Garantía: ' + money(m) : 'El monto se calcula solo.';
+  }
+  function sync(){
+    const banco = $('#gc2Banco');
+    if(banco) banco.style.display = state.modal === 'transferencia' ? '' : 'none';
+  }
+
+  /* ---------- PREVIEW: ESCRITO JUDICIAL COMPLETO ---------- */
+  function hechos(){
+    return [
+      `Que ${plain('f_padre_nombre','[EL PROMOVENTE]')} y ${plain('f_madre_nombre','[LA PROMOVENTE]')} procrearon a ${plain('f_menor_nombre','[EL MENOR]')}, nacido en ${plain('f_menor_lugar','[lugar de nacimiento]')}.`,
+      `Que ${plain('f_menor_nombre','[el menor]')} reside de manera habitual en ${plain('f_menor_ciudad','[ciudad]')} desde ${plain('f_menor_reside','[fecha]')}, donde ha establecido su realidad social, emocional y educativa, cursando estudios en ${plain('f_menor_escuela','[escuela]')}.`,
+      `Que es voluntad de ambos comparecientes regular de común acuerdo la patria potestad, la guarda y custodia, el régimen de convivencia y la pensión alimenticia de ${plain('f_menor_nombre','[el menor]')}, atendiendo a su interés superior.`,
+      `Que para tal efecto celebran el convenio cuyas cláusulas se transcriben en el presente escrito, el cual solicitan sea aprobado y elevado a la categoría de cosa juzgada.`
+    ];
+  }
+
+  function render(){
+    const d = $('#gcDoc');
+    const viajeTxt = state.viaje==='si'
+      ? 'Ambos progenitores podrán viajar con el menor al extranjero, previa autorización escrita del otro, conforme al Convenio de La Haya sobre los Aspectos Civiles de la Sustracción Internacional de Menores.'
+      : 'La salida del menor del territorio nacional queda restringida salvo orden judicial o acuerdo expreso de ambas partes.';
+
+    const pagoTxt = state.modal === 'transferencia'
+      ? `mediante transferencia electrónica a la cuenta señalada en el ANEXO ÚNICO de este convenio`
+      : `en efectivo, recabando el recibo correspondiente`;
+
+    const gm_ = garantiaMonto();
+    const garantiaFrase = gm_
+      ? `el equivalente a ${plain('f_garantia_meses','[n]')} meses de pensión, esto es, ${money(gm_)}`
+      : `[pendiente: meses de garantía]`;
+
+    const membrete = val('f_desp_nombre') || val('f_desp_abogado')
+      ? `<div style="text-align:center;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#7b6a3f;margin-bottom:10px">
+           ${esc(val('f_desp_nombre'))}${val('f_desp_abogado') ? ' · ' + esc(val('f_desp_abogado')) : ''}${val('f_desp_cedula') ? ' · Céd. Prof. ' + esc(val('f_desp_cedula')) : ''}
+         </div>` : '';
+
+    d.innerHTML = `
+      <div class="gc-doc-watermark">Borrador</div>
+      ${membrete}
+
+      <div style="text-align:right;font-size:11px;line-height:1.5;margin-bottom:18px">
+        <b>${plain('f_padre_nombre','[PROMOVENTE 1]')}</b><br>
+        <b>${plain('f_madre_nombre','[PROMOVENTE 2]')}</b><br>
+        ${tramiteTxt[state.doc]}<br>
+        ${val('f_expediente') ? 'EXP. ' + esc(val('f_expediente')) : 'EXP. [por asignar]'}
+      </div>
+
+      <div style="font-size:12px;font-weight:700;line-height:1.5;margin-bottom:6px">
+        C. JUEZ DE PRIMERA INSTANCIA EN MATERIA FAMILIAR<br>
+        DE ${plain('f_juzgado','[DISTRITO JUDICIAL]').toUpperCase()}
+      </div>
+      <div style="font-size:12px;font-weight:700;letter-spacing:.3em;margin-bottom:14px">P R E S E N T E.</div>
+
+      <div class="doc-clause">
+        ${g('f_padre_nombre','[NOMBRE DEL PROMOVENTE]')} y ${g('f_madre_nombre','[NOMBRE DE LA PROMOVENTE]')},
+        por nuestro propio derecho, señalando como domicilio para oír y recibir toda clase de notificaciones el ubicado en
+        ${g('f_desp_dom','[domicilio para notificaciones]')}, ante usted con el debido respeto comparecemos y exponemos:
+      </div>
+
+      <div class="doc-rule"></div>
+
+      <div class="doc-clause"><b>I. PROTESTA DE LEY.</b> Bajo protesta de decir verdad, en términos del artículo 259 del Código de Procedimientos Civiles del Estado de Querétaro, manifestamos que los hechos que a continuación se narran nos constan de manera personal y directa, y que lo aquí expuesto es cierto.</div>
+
+      <div class="doc-clause"><b>II. PRESTACIONES.</b> De este H. Juzgado solicitamos:
+        <br><b>a)</b> La aprobación del convenio que se contiene en el presente escrito y su elevación a la categoría de cosa juzgada.
+        <br><b>b)</b> El reconocimiento del régimen de ${custodiaTxt[state.custodia]} respecto de ${g('f_menor_nombre','[el menor]')}.
+        <br><b>c)</b> La aprobación del régimen de convivencia y de la pensión alimenticia en los términos convenidos.
+      </div>
+
+      <div class="doc-clause"><b>III. HECHOS.</b>
+        ${hechos().map((h,i)=>`<div style="margin-top:6px">${i+1}. ${esc(h)}</div>`).join('')}
+      </div>
+
+      <div class="doc-clause"><b>IV. DERECHO.</b> Son aplicables el artículo 4° de la Constitución Política de los Estados Unidos Mexicanos; los artículos 296, 407, 408, 418, 419, 440, 631 y 632 del Código Civil del Estado de Querétaro; ${marcoProcesal()}; la Ley General de los Derechos de Niñas, Niños y Adolescentes; y la Convención sobre los Derechos del Niño.</div>
+
+      <div class="doc-rule"></div>
+      <h3 style="margin:14px 0 4px">${docTitles[state.doc]}</h3>
+      <div class="doc-sub">C L Á U S U L A S</div>
+
+      <div class="doc-clause"><b>PRIMERA. Antecedentes.</b> Los comparecientes manifiestan que ${g('f_menor_nombre','[menor]')}, nacido en ${g('f_menor_lugar','[lugar]')}, reside de manera habitual en ${g('f_menor_ciudad','[ciudad]')} desde ${g('f_menor_reside','[fecha]')}, cursando estudios en ${g('f_menor_escuela','[escuela]')}. El presente convenio se celebra atendiendo al <b>interés superior de la infancia</b> como principio rector.</div>
+
+      <div class="doc-clause"><b>SEGUNDA. Patria potestad y custodia.</b> Ambas partes acuerdan ${custodiaTxt[state.custodia]}, conforme a los artículos 407, 408, 418 y 419 del Código Civil del Estado de Querétaro. Se fija como domicilio de depósito el ubicado en ${g('f_menor_deposito','[domicilio de depósito]')}.</div>
+
+      <div class="doc-clause"><b>TERCERA. Régimen de convivencia.</b> Entre semana, ${g('f_conv_semana','[convivencia entre semana]')}; fines de semana, ${g('f_conv_finde','[convivencia de fin de semana]')}. El progenitor no custodio tendrá comunicación libre por vía telefónica o videollamada con el menor.</div>
+
+      <div class="doc-clause"><b>CUARTA. Periodos vacacionales.</b> Verano: ${g('f_vac_verano','[verano]')}. Diciembre: ${g('f_vac_dic','[diciembre]')}. Semana Santa se dividirá equitativamente entre ambos progenitores.</div>
+
+      <div class="doc-clause"><b>QUINTA. Viajes.</b> ${viajeTxt}</div>
+
+      <div class="doc-clause"><b>SEXTA. Pensión alimenticia.</b> El deudor alimentario entregará por concepto de pensión alimenticia la cantidad de ${gm('f_pension_monto','[monto exacto]')} de forma ${periodoTxt[val('f_pension_periodo')||'mensual']}, pagadera ${g('f_pension_dia','[día exacto de entrega]')}, ${pagoTxt}. Dicha cantidad se fija conforme al artículo 296 del Código Civil del Estado de Querétaro, atendiendo a la posibilidad de quien debe darla y a la necesidad de quien debe recibirla, y se incrementará anualmente en la misma proporción en que aumente el salario mínimo general vigente.</div>
+
+      <div class="doc-clause"><b>SÉPTIMA. Gastos escolares y médicos.</b> Adicionalmente cubrirá: colegiatura mensual de ${gm('f_colegiatura','[colegiatura]')}, inscripción anual de ${gm('f_matricula','[inscripción]')} y actividades extracurriculares (${g('f_extra','[extracurriculares]')}). ${g('f_madre_gastos','[gastos de la otra parte]')} quedan a cargo del otro progenitor. Los gastos médicos extraordinarios se cubrirán conforme a lo siguiente: ${g('f_medicos','[médicos]')}.</div>
+
+      <div class="doc-clause"><b>OCTAVA. Garantía de la pensión.</b> Para garantizar el cumplimiento de la obligación alimentaria, en términos de los artículos 631 y 632 del Código Civil del Estado de Querétaro, el deudor alimentario constituirá garantía por ${garantiaFrase}, dentro de los sesenta días naturales siguientes a la aprobación del presente convenio.</div>
+
+      <div class="doc-clause"><b>NOVENA. Compromisos de sana convivencia.</b> Ambos progenitores se obligan a proporcionar al menor un ambiente armónico, a no denostar la figura del otro progenitor ni generar en el menor ideas equívocas respecto de él, conducta que de actualizarse podría dar lugar a lo previsto por el artículo 440 del Código Civil del Estado de Querétaro, a no utilizar al menor como intermediario y a fomentar la relación con ambas familias.</div>
+
+      <div class="doc-clause"><b>DÉCIMA. Jurisdicción y ausencia de vicios.</b> Las partes se someten a la jurisdicción de los tribunales de ${g('f_juzgado','[juzgado]')} y manifiestan que este convenio se celebra de manera libre, voluntaria y de buena fe, sin dolo, error, violencia ni mala fe.</div>
+
+      <div class="doc-rule"></div>
+
+      <div class="doc-clause"><b>POR LO EXPUESTO, A USTED C. JUEZ, ATENTAMENTE PEDIMOS:</b>
+        <br><b>PRIMERO.</b> Tenernos por presentados en los términos del presente escrito.
+        <br><b>SEGUNDO.</b> Aprobar el convenio que antecede y elevarlo a la categoría de cosa juzgada.
+        <br><b>TERCERO.</b> Ordenar la expedición de copias certificadas que se soliciten.
+      </div>
+
+      <div style="text-align:center;font-size:11.5px;font-weight:700;margin:16px 0 6px">PROTESTAMOS LO NECESARIO</div>
+      <div style="text-align:center;font-size:11px;margin-bottom:18px">${plain('f_juzgado','[ciudad]')}, a la fecha de su presentación.</div>
+
+      <div style="display:flex;justify-content:space-around;margin-top:26px;text-align:center;font-size:11px">
+        <div>_______________________<br><b>${plain('f_padre_nombre','PROMOVENTE 1')}</b></div>
+        <div>_______________________<br><b>${plain('f_madre_nombre','PROMOVENTE 2')}</b></div>
+      </div>
+
+      ${state.modal==='transferencia' ? `
+      <div class="gc2-anexo">
+        <div style="text-align:center;font-weight:700;font-size:12px;margin-bottom:8px">ANEXO ÚNICO — DATOS PARA EL DEPÓSITO DE LA PENSIÓN</div>
+        <div style="font-size:11.5px;line-height:1.9">
+          Institución bancaria: ${g('f_banco','[banco]')}<br>
+          Titular de la cuenta: ${g('f_banco_titular','[titular]')}<br>
+          CLABE interbancaria: ${g('f_clabe','[18 dígitos]')}
+          ${val('f_clabe') ? (clabeValida(val('f_clabe')) ? ' <span class="gc2-ok">✓</span>' : ' <span class="gc2-bad">(dígito verificador incorrecto)</span>') : ''}
+        </div>
+      </div>` : ''}
+
+      <div style="margin-top:20px;padding-top:10px;border-top:1px solid #ddd;font-size:10px;color:#777;line-height:1.5">
+        Borrador de trabajo generado automáticamente. Requiere revisión y firma del abogado responsable antes de su presentación o ratificación.
+        Los preceptos citados corresponden a la legislación del Estado de Querétaro y deben confirmarse en el periódico oficial La Sombra de Arteaga antes de presentarse.
+      </div>
+    `;
+  }
+
+  /* ---------- REVISIÓN ---------- */
+  function buildReview(){
+    const gm_ = garantiaMonto();
+    const rows = [
+      ['Documento', docTitles[state.doc]],
+      ['Juzgado', plain('f_juzgado','—')],
+      ['Marco procesal', state.marco==='cnpcyf' ? 'CNPCyF arts. 587-596' : 'CPC Qro arts. 711-719'],
+      ['Promovente 1', plain('f_padre_nombre','—')],
+      ['Promovente 2', plain('f_madre_nombre','—')],
+      ['Menor', plain('f_menor_nombre','—')],
+      ['Custodia', {compartida:'Compartida',madre:'A la madre',padre:'Al padre'}[state.custodia]],
+      ['Pensión', val('f_pension_monto') ? money(val('f_pension_monto'))+' '+(periodoTxt[val('f_pension_periodo')||'mensual']) : '—'],
+      ['Día de entrega', plain('f_pension_dia','—')],
+      ['Modalidad', state.modal==='transferencia' ? 'Transferencia' : 'Efectivo'],
+      ['CLABE', state.modal==='transferencia' ? (val('f_clabe') ? (clabeValida(val('f_clabe'))?'Válida':'INVÁLIDA') : '—') : 'No aplica'],
+      ['Colegiatura', val('f_colegiatura') ? money(val('f_colegiatura')) : '—'],
+      ['Garantía', gm_ ? money(gm_) : '—'],
+    ];
+    $('#gcReview').innerHTML = rows.map(r=>{
+      const malo = r[1]==='INVÁLIDA';
+      return `<div style="display:flex;gap:10px;padding:7px 0;border-bottom:1px solid #eee">
+         <span style="min-width:180px;color:#7b8496;font-weight:600">${r[1]&&r[1]!=='—'?'✓':'○'} ${r[0]}</span>
+         <span style="color:${malo?'#b23b3b':'#12203a'};font-weight:${malo?'700':'400'}">${esc(r[1]||'—')}</span>
+       </div>`;}).join('');
+  }
+
+  /* ---------- TOAST ---------- */
+  function toast(msg){
+    $('#gcToastMsg').textContent = msg;
+    $('#gcToast').classList.add('show');
+    setTimeout(()=> $('#gcToast').classList.remove('show'), 2600);
+  }
+
+  /* ---------- AUTOGUARDADO Y CASOS ---------- */
+  const LS_KEY = 'regutt.convenios.casos.v2';
+  const LS_LAST = 'regutt.convenios.ultimo.v2';
+  function allFields(){ return $$('#genconv-root input, #genconv-root select, #genconv-root textarea').filter(e=>e.id); }
+  function snapshot(){
+    const data = {}; allFields().forEach(e=> data[e.id] = e.value);
+    return { data, state: Object.assign({}, state), ts: Date.now() };
+  }
+  function restore(snap){
+    if(!snap) return;
+    allFields().forEach(e=>{ if(snap.data && snap.data[e.id] != null) e.value = snap.data[e.id]; });
+    Object.assign(state, snap.state||{});
+    [['#gcDocType','doc'],['#gcCustodia','custodia'],['#gcViajes','viaje'],['#gcModalidad','modal'],['#gcMarco','marco']]
+      .forEach(([sel,key])=>{
+        const cont = $(sel); if(!cont) return;
+        $$('.gc-chip',cont).forEach(c=> c.classList.toggle('on', c.dataset[Object.keys(c.dataset)[0]] === state[key]));
+      });
+    sync(); calcUpdate(); clabeUpdate(); pensionLetraUpdate(); garantiaUpdate(); render();
+  }
+  function readCases(){ try{ return JSON.parse(localStorage.getItem(LS_KEY)||'{}'); }catch(e){ return {}; } }
+  function writeCases(o){ try{ localStorage.setItem(LS_KEY, JSON.stringify(o)); }catch(e){ toast('No se pudo guardar en este navegador'); } }
+  function caseName(){
+    return (val('f_menor_nombre') || val('f_padre_nombre') || 'Caso sin nombre').slice(0,60);
+  }
+  function refreshCaseList(sel){
+    const cases = readCases(), el = $('#gc2Cases'); if(!el) return;
+    const keys = Object.keys(cases).sort((a,b)=> (cases[b].ts||0)-(cases[a].ts||0));
+    el.innerHTML = '<option value="">— Casos guardados ('+keys.length+') —</option>' +
+      keys.map(k=> `<option value="${esc(k)}"${k===sel?' selected':''}>${esc(cases[k].nombre||k)}</option>`).join('');
+  }
+  let saveTimer = null;
+  function save(){
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(()=>{
+      try{ localStorage.setItem(LS_LAST, JSON.stringify(snapshot())); }catch(e){}
+    }, 500);
+  }
+  $('#gc2Save') && $('#gc2Save').addEventListener('click', ()=>{
+    const cases = readCases();
+    const key = $('#gc2Cases').value || ('caso_' + Date.now());
+    const snap = snapshot(); snap.nombre = caseName();
+    cases[key] = snap; writeCases(cases); refreshCaseList(key);
+    toast('Caso guardado ✓');
+  });
+  $('#gc2Cases') && $('#gc2Cases').addEventListener('change', e=>{
+    const k = e.target.value; if(!k) return;
+    const cases = readCases();
+    if(cases[k]){ restore(cases[k]); toast('Caso abierto'); }
+  });
+  $('#gc2Del') && $('#gc2Del').addEventListener('click', ()=>{
+    const k = $('#gc2Cases').value;
+    if(!k){ toast('Elige un caso de la lista'); return; }
+    const cases = readCases(); delete cases[k]; writeCases(cases); refreshCaseList();
+    toast('Caso borrado');
+  });
+  $('#gc2NewCase') && $('#gc2NewCase').addEventListener('click', ()=>{
+    allFields().forEach(e=>{ if(e.id !== 'f_juzgado' && !e.id.startsWith('f_desp_')) e.value=''; });
+    $('#gc2Cases').value = '';
+    calcUpdate(); clabeUpdate(); pensionLetraUpdate(); garantiaUpdate(); render(); save();
+    step = 0; refreshSteps();
+    toast('Caso nuevo');
+  });
+
+  /* ---------- EVENTOS DE CAMPOS ---------- */
+  function onFieldChange(){
+    calcUpdate(); clabeUpdate(); pensionLetraUpdate(); garantiaUpdate(); render(); save();
+  }
+  $$('#genconv-root input, #genconv-root select, #genconv-root textarea').forEach(el=>{
+    el.addEventListener('input', onFieldChange);
+    el.addEventListener('change', onFieldChange);
+  });
+  $('#gc2CalcApply') && $('#gc2CalcApply').addEventListener('click', ()=>{
+    const m = $('#gc2CalcOut').dataset.monto;
+    if(!m){ toast('Captura primero el ingreso'); return; }
+    $('#f_pension_monto').value = m;
+    $('#f_pension_periodo').value = 'mensual';
+    onFieldChange(); toast('Monto aplicado');
+  });
+
+  /* ---------- WORD ---------- */
+  let docxReady = !!window.docx;
+  function ensureDocx(cb){
+    if(window.docx) return cb(true);
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js';
+    s.onload = ()=> cb(!!window.docx);
+    s.onerror = ()=> cb(false);
+    document.head.appendChild(s);
+  }
+
+  function generateWord(){
+    ensureDocx(function(ok){
+      if(!ok){ toast('No se pudo cargar el módulo de Word. Usa Imprimir / PDF.'); return; }
+      const D = window.docx;
+      const { Document, Packer, Paragraph, TextRun, AlignmentType, BorderStyle } = D;
+
+      const P = (txt,opts)=> new Paragraph({
+        spacing:{after:(opts&&opts.after)||140,line:270},
+        alignment:(opts&&opts.align)||AlignmentType.JUSTIFIED,
+        children:[new TextRun({text:txt,font:'Arial',size:22,bold:!!(opts&&opts.bold)})]
+      });
+      const clause = (head,body)=> new Paragraph({
+        spacing:{after:150,line:270}, alignment:AlignmentType.JUSTIFIED,
+        children:[ new TextRun({text:head+' ',bold:true,font:'Arial',size:22}),
+                   new TextRun({text:body,font:'Arial',size:22}) ]
+      });
+      const center = (t,bold,size)=> new Paragraph({alignment:AlignmentType.CENTER,spacing:{after:80},
+        children:[new TextRun({text:t,bold:!!bold,font:'Arial',size:size||22})]});
+      const right = (t,bold)=> new Paragraph({alignment:AlignmentType.RIGHT,spacing:{after:40},
+        children:[new TextRun({text:t,bold:!!bold,font:'Arial',size:20})]});
+      const rule = ()=> new Paragraph({spacing:{after:200},
+        border:{bottom:{color:'999999',size:6,style:BorderStyle.SINGLE,space:1}},children:[]});
+
+      const v = (id,fb)=> val(id)||fb;
+      const gm_ = garantiaMonto();
+      const viajeTxt = state.viaje==='si'
+        ? 'Ambos progenitores podrán viajar con el menor al extranjero, previa autorización escrita del otro progenitor otorgada ante notario o autoridad competente, conforme al Convenio de La Haya sobre los Aspectos Civiles de la Sustracción Internacional de Menores.'
+        : 'La salida del menor del territorio nacional queda restringida, salvo orden judicial o acuerdo expreso y por escrito de ambas partes.';
+      const pagoTxt = state.modal === 'transferencia'
+        ? 'mediante transferencia electrónica a la cuenta señalada en el ANEXO ÚNICO de este convenio'
+        : 'en efectivo, recabando el recibo correspondiente';
+
+      const kids = [];
+
+      if(val('f_desp_nombre') || val('f_desp_abogado')){
+        kids.push(center(
+          [v('f_desp_nombre',''), v('f_desp_abogado',''), val('f_desp_cedula') ? 'Céd. Prof. '+val('f_desp_cedula') : '']
+            .filter(Boolean).join('  ·  '), false, 18));
+      }
+
+      kids.push(
+        right(v('f_padre_nombre','[PROMOVENTE 1]'), true),
+        right(v('f_madre_nombre','[PROMOVENTE 2]'), true),
+        right(tramiteTxt[state.doc]),
+        right(val('f_expediente') ? 'EXP. '+val('f_expediente') : 'EXP. [por asignar]'),
+        P('', {after:120}),
+        P('C. JUEZ DE PRIMERA INSTANCIA EN MATERIA FAMILIAR', {bold:true, align:AlignmentType.LEFT, after:0}),
+        P('DE ' + v('f_juzgado','[DISTRITO JUDICIAL]').toUpperCase(), {bold:true, align:AlignmentType.LEFT, after:0}),
+        P('P R E S E N T E.', {bold:true, align:AlignmentType.LEFT, after:160}),
+
+        P(`${v('f_padre_nombre','[NOMBRE DEL PROMOVENTE]')} y ${v('f_madre_nombre','[NOMBRE DE LA PROMOVENTE]')}, por nuestro propio derecho, señalando como domicilio para oír y recibir toda clase de notificaciones el ubicado en ${v('f_desp_dom','[domicilio para notificaciones]')}, ante usted con el debido respeto comparecemos y exponemos:`),
+        rule(),
+
+        clause('I. PROTESTA DE LEY.',
+          'Bajo protesta de decir verdad, en términos del artículo 259 del Código de Procedimientos Civiles del Estado de Querétaro, manifestamos que los hechos que a continuación se narran nos constan de manera personal y directa, y que lo aquí expuesto es cierto.'),
+
+        clause('II. PRESTACIONES.',
+          `a) La aprobación del convenio contenido en el presente escrito y su elevación a la categoría de cosa juzgada. b) El reconocimiento del régimen de ${custodiaTxt[state.custodia]} respecto de ${v('f_menor_nombre','[el menor]')}. c) La aprobación del régimen de convivencia y de la pensión alimenticia en los términos convenidos.`),
+
+        P('III. HECHOS.', {bold:true, align:AlignmentType.LEFT, after:60})
+      );
+      hechos().forEach((h,i)=> kids.push(P((i+1)+'. '+h)));
+
+      kids.push(
+        clause('IV. DERECHO.',
+          `Son aplicables el artículo 4° de la Constitución Política de los Estados Unidos Mexicanos; los artículos 296, 407, 408, 418, 419, 440, 631 y 632 del Código Civil del Estado de Querétaro; ${marcoProcesal()}; la Ley General de los Derechos de Niñas, Niños y Adolescentes; y la Convención sobre los Derechos del Niño.`),
+        rule(),
+        center(docTitles[state.doc], true, 26),
+        center('C L Á U S U L A S', true, 22),
+
+        clause('PRIMERA. Antecedentes.',
+          `Los comparecientes manifiestan que ${v('f_menor_nombre','[menor]')}, nacido en ${v('f_menor_lugar','[lugar]')}, reside de manera habitual en ${v('f_menor_ciudad','[ciudad]')} desde ${v('f_menor_reside','[fecha]')}, donde ha establecido su realidad social, emocional y educativa, cursando estudios en ${v('f_menor_escuela','[escuela]')}. El presente convenio se celebra atendiendo al interés superior de la infancia como principio rector.`),
+
+        clause('SEGUNDA. Patria potestad y custodia.',
+          `Ambas partes acuerdan ${custodiaTxt[state.custodia]}, conforme a los artículos 407, 408, 418 y 419 del Código Civil del Estado de Querétaro. Se fija como domicilio de depósito el ubicado en ${v('f_menor_deposito','[domicilio de depósito]')}. En caso de cambio de domicilio, la parte interesada deberá notificarlo por escrito a la otra con sesenta días naturales de anticipación.`),
+
+        clause('TERCERA. Régimen de convivencia.',
+          `Entre semana, ${v('f_conv_semana','[convivencia entre semana]')}; fines de semana, ${v('f_conv_finde','[convivencia de fin de semana]')}. El progenitor no custodio tendrá derecho a comunicación libre por vía telefónica o videollamada con el menor, sin que la otra parte pueda impedirlo sin justa causa.`),
+
+        clause('CUARTA. Periodos vacacionales.',
+          `Vacaciones de verano: ${v('f_vac_verano','[verano]')}. Vacaciones de diciembre: ${v('f_vac_dic','[diciembre]')}. Las vacaciones de Semana Santa se dividirán equitativamente entre ambos progenitores, previo acuerdo.`),
+
+        clause('QUINTA. Viajes.', viajeTxt),
+
+        clause('SEXTA. Pensión alimenticia.',
+          `El deudor alimentario entregará por concepto de pensión alimenticia la cantidad de ${mplain('f_pension_monto','[monto exacto]')} de forma ${periodoTxt[val('f_pension_periodo')||'mensual']}, pagadera ${v('f_pension_dia','[día exacto de entrega]')}, ${pagoTxt}. Dicha cantidad se fija conforme al artículo 296 del Código Civil del Estado de Querétaro, atendiendo a la posibilidad de quien debe darla y a la necesidad de quien debe recibirla, y se incrementará anualmente en la misma proporción en que aumente el salario mínimo general vigente.`),
+
+        clause('SÉPTIMA. Gastos escolares y médicos.',
+          `Adicionalmente cubrirá: colegiatura mensual de ${mplain('f_colegiatura','[colegiatura]')}, inscripción anual de ${mplain('f_matricula','[inscripción]')} y actividades extracurriculares (${v('f_extra','[extracurriculares]')}). Quedan a cargo del otro progenitor: ${v('f_madre_gastos','[gastos]')}. Los gastos médicos extraordinarios se cubrirán conforme a lo siguiente: ${v('f_medicos','[médicos]')}.`),
+
+        clause('OCTAVA. Garantía de la pensión.',
+          `Para garantizar el cumplimiento de la obligación alimentaria, en términos de los artículos 631 y 632 del Código Civil del Estado de Querétaro, el deudor alimentario constituirá garantía por ${gm_ ? 'el equivalente a '+v('f_garantia_meses','[n]')+' meses de pensión, esto es, '+money(gm_) : '[pendiente: meses de garantía]'}, dentro de los sesenta días naturales siguientes a la aprobación del presente convenio.`),
+
+        clause('NOVENA. Compromisos de sana convivencia.',
+          `Ambos progenitores se obligan a proporcionar al menor un ambiente armónico que permita su desarrollo integral; a no generar ideas equívocas ni denostar la figura del otro progenitor, conducta que de actualizarse podría dar lugar a lo previsto por el artículo 440 del Código Civil del Estado de Querétaro; a no utilizar al menor como intermediario; y a fomentar activamente la relación con ambas familias.`),
+
+        clause('DÉCIMA. Jurisdicción y ausencia de vicios.',
+          `Para la interpretación, cumplimiento y ejecución del presente convenio, las partes se someten a la jurisdicción de los tribunales competentes de ${v('f_juzgado','[juzgado]')}, y manifiestan que este convenio se celebra de manera libre, voluntaria y de buena fe, sin dolo, error, violencia ni mala fe, no conteniendo cláusula contraria a la moral, al derecho ni a las buenas costumbres.`),
+
+        rule(),
+        P('POR LO EXPUESTO, A USTED C. JUEZ, ATENTAMENTE PEDIMOS:', {bold:true, align:AlignmentType.LEFT}),
+        P('PRIMERO. Tenernos por presentados en los términos del presente escrito.'),
+        P('SEGUNDO. Aprobar el convenio que antecede y elevarlo a la categoría de cosa juzgada.'),
+        P('TERCERO. Ordenar la expedición de las copias certificadas que se soliciten.'),
+        center('PROTESTAMOS LO NECESARIO', true, 22),
+        center(v('f_juzgado','[ciudad]') + ', a la fecha de su presentación.', false, 20),
+        P('', {after:200}),
+        center('_______________________________', false, 22),
+        center(v('f_padre_nombre','PROMOVENTE 1'), true, 22),
+        P('', {after:120}),
+        center('_______________________________', false, 22),
+        center(v('f_madre_nombre','PROMOVENTE 2'), true, 22)
+      );
+
+      if(state.modal === 'transferencia'){
+        kids.push(
+          rule(),
+          center('ANEXO ÚNICO — DATOS PARA EL DEPÓSITO DE LA PENSIÓN', true, 22),
+          P('Institución bancaria: ' + v('f_banco','[banco]'), {align:AlignmentType.LEFT, after:60}),
+          P('Titular de la cuenta: ' + v('f_banco_titular','[titular]'), {align:AlignmentType.LEFT, after:60}),
+          P('CLABE interbancaria: ' + v('f_clabe','[18 dígitos]'), {align:AlignmentType.LEFT, after:60})
+        );
+      }
+
+      kids.push(
+        rule(),
+        P('Borrador de trabajo generado automáticamente. Requiere revisión y firma del abogado responsable antes de su presentación o ratificación. Los preceptos citados corresponden a la legislación del Estado de Querétaro y deben confirmarse en el periódico oficial La Sombra de Arteaga antes de presentarse.',
+          {align:AlignmentType.LEFT})
+      );
+
+      const doc = new Document({ sections:[{ properties:{page:{margin:{top:1080,right:1080,bottom:1080,left:1080}}}, children:kids }]});
+      Packer.toBlob(doc).then(blob=>{
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const nm = (val('f_menor_nombre')||'convenio').replace(/\s+/g,'_').toLowerCase();
+        a.href=url; a.download='convenio_'+nm+'.docx'; document.body.appendChild(a); a.click();
+        document.body.removeChild(a); URL.revokeObjectURL(url);
+        toast('Convenio descargado ✓');
+      }).catch(()=> toast('Error al generar el archivo.'));
+    });
+  }
+  $('#gcGenerate').addEventListener('click', generateWord);
+  $('#gcGenerate2').addEventListener('click', generateWord);
+
+  /* ---------- IMPRIMIR (sin ventana emergente: funciona en iOS) ---------- */
+  $('#gcPrint').addEventListener('click', ()=>{ window.print(); });
+
+  /* ---------- CONTADORES ---------- */
+  $$('.gc-stat .n[data-count]').forEach(el=>{
+    const target=+el.dataset.count; let cur=0;
+    const inc=Math.max(1,Math.ceil(target/30));
+    const t=setInterval(()=>{ cur+=inc; if(cur>=target){cur=target;clearInterval(t);} el.textContent=cur; },30);
+  });
+
+  /* ---------- ARRANQUE ---------- */
+  refreshCaseList();
+  let last = null;
+  try{ last = JSON.parse(localStorage.getItem(LS_LAST)||'null'); }catch(e){}
+  if(last) restore(last); else { sync(); render(); }
+  calcUpdate(); clabeUpdate(); pensionLetraUpdate(); garantiaUpdate();
+  refreshSteps();
+
+  /* expuesto para pruebas automatizadas */
+  window.__regutt = { pesosALetra, money, clabeValida, RFC_RE, CURP_RE, mensualizar };
+})();
+
+</script>
