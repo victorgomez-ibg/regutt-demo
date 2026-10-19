@@ -34,9 +34,11 @@
   font-family:var(--sans);color:var(--ink);line-height:1.55;display:block;width:100%;
   background:var(--navy);overflow-x:hidden;
 }
-#regutt-root button,#regutt-root a{font-family:inherit;cursor:pointer;text-decoration:none;color:inherit;border:none;background:none}
-#regutt-root input,#regutt-root select,#regutt-root textarea{font-family:inherit;font-size:16px}
-#regutt-root img,#regutt-root svg{max-width:100%}
+/* Mismo motivo que el reset: con el #id estas reglas ganaban a las clases y
+   dejaban los botones sin fondo ni color de marca. */
+:where(#regutt-root) button,:where(#regutt-root) a{font-family:inherit;cursor:pointer;text-decoration:none;color:inherit;border:none;background:none}
+:where(#regutt-root) input,:where(#regutt-root) select,:where(#regutt-root) textarea{font-family:inherit;font-size:16px}
+:where(#regutt-root) img,:where(#regutt-root) svg{max-width:100%}
 #regutt-root a:focus-visible,#regutt-root button:focus-visible,#regutt-root input:focus-visible,#regutt-root select:focus-visible,#regutt-root textarea:focus-visible{outline:3px solid var(--gold-2);outline-offset:3px;border-radius:6px}
 .rg-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 

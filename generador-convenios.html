@@ -322,10 +322,10 @@
           <div class="gc-field">
             <label class="gc-label">Marco procesal aplicable</label>
             <div class="gc-chips" id="gcMarco">
-              <button type="button" class="gc-chip on" data-marco="cnpcyf">CNPCyF (arts. 587-596)</button>
-              <button type="button" class="gc-chip" data-marco="cpc">CPC Qro (arts. 711-719)</button>
+              <button type="button" class="gc-chip on" data-marco="cpc">CPC Qro (vigente en Cadereyta)</button>
+              <button type="button" class="gc-chip" data-marco="cnpcyf">CNPCyF (arts. 587-596)</button>
             </div>
-            <div class="gc-hint">El CNPCyF sustituye al CPC del Estado en jurisdicción voluntaria a partir de su entrada en vigor en Querétaro (septiembre 2026). Verifica la fecha vigente en La Sombra de Arteaga antes de presentar.</div>
+            <div class="gc-hint">El CNPCyF entra en vigor por distritos judiciales: en septiembre de 2026 solo en San Juan del Río, y a Cadereyta le corresponde diciembre de 2026 según el Acuerdo ACJ-2/2026. Hasta entonces rige el código estatal. Confirma la declaratoria del Congreso en La Sombra de Arteaga antes de presentar.</div>
           </div>
         </details>
       </div>
@@ -578,7 +578,7 @@
               <input class="gc-input" id="f_medicos" placeholder="50% cada progenitor" data-live>
             </div>
             <div>
-              <label class="gc-label">Garantía: meses de pensión (arts. 631 y 632 CC Qro)</label>
+              <label class="gc-label">Garantía: meses de pensión (arts. 300 y 302 CC Qro)</label>
               <input class="gc-input" id="f_garantia_meses" type="number" min="0" step="1" placeholder="3" data-live>
               <div class="gc-hint" id="gc2GarantiaOut">El monto se calcula solo.</div>
             </div>
@@ -652,7 +652,8 @@
    - Pensión con monto exacto, día y modalidad; anexo bancario
    - CLABE validada con dígito verificador; RFC y CURP
    - Autoguardado y lista de casos en el navegador del abogado
-   - Arts. 631 y 632 en lugar del 302
+   - Garantía de alimentos fundada en los arts. 300 y 302 (verificado en sentencias del P.J. de Querétaro)
+   - Jurisdicción voluntaria: arts. 937-944; el divorcio voluntario va por 711-719
    - Impresión sin ventana emergente (funciona en iOS)
    - Respaldo de CDN para la librería de Word
    ============================================================ */
@@ -665,7 +666,7 @@
   /* ---------- ESTADO ---------- */
   const STEPS = ["Tipo","Progenitores","Menor","Custodia","Pensión","Revisar"];
   let step = 0;
-  const state = { doc:"custodia", custodia:"compartida", viaje:"si", modal:"transferencia", marco:"cnpcyf" };
+  const state = { doc:"custodia", custodia:"compartida", viaje:"si", modal:"transferencia", marco:"cpc" };
 
   /* ---------- NÚMEROS A LETRA ---------- */
   const UNI = ['','UNO','DOS','TRES','CUATRO','CINCO','SEIS','SIETE','OCHO','NUEVE','DIEZ',
@@ -810,10 +811,16 @@
   const periodoTxt = { semanal:'semanal', quincenal:'quincenal', mensual:'mensual' };
 
   /** Marco procesal: cambia con la entrada en vigor del CNPCyF. */
+  /* El divorcio por mutuo consentimiento va por su vía especial (711-719 CPC Qro);
+     los convenios de custodia y pensión van por jurisdicción voluntaria (937-944 CPC Qro).
+     El CNPCyF entra por distritos: en Cadereyta todavía no rige, por eso el valor por
+     defecto es el código estatal. Verificar la declaratoria en La Sombra de Arteaga. */
   function marcoProcesal(){
-    return state.marco === 'cnpcyf'
-      ? 'los artículos 587 a 596 del Código Nacional de Procedimientos Civiles y Familiares'
-      : 'los artículos 711 a 719 del Código de Procedimientos Civiles del Estado de Querétaro';
+    if(state.marco === 'cnpcyf')
+      return 'los artículos 587 a 596 del Código Nacional de Procedimientos Civiles y Familiares';
+    return state.doc === 'divorcio'
+      ? 'los artículos 711 a 719 del Código de Procedimientos Civiles del Estado de Querétaro, relativos al divorcio por mutuo consentimiento'
+      : 'los artículos 937 a 944 del Código de Procedimientos Civiles del Estado de Querétaro, relativos a la jurisdicción voluntaria';
   }
 
   /* ---------- CÁLCULOS ---------- */
@@ -923,13 +930,14 @@
         <br><b>a)</b> La aprobación del convenio que se contiene en el presente escrito y su elevación a la categoría de cosa juzgada.
         <br><b>b)</b> El reconocimiento del régimen de ${custodiaTxt[state.custodia]} respecto de ${g('f_menor_nombre','[el menor]')}.
         <br><b>c)</b> La aprobación del régimen de convivencia y de la pensión alimenticia en los términos convenidos.
+        <br><b>d)</b> Que se dé la intervención que corresponde al Agente del Ministerio Público adscrito, en términos del artículo 940 fracción II del Código de Procedimientos Civiles del Estado de Querétaro.
       </div>
 
       <div class="doc-clause"><b>III. HECHOS.</b>
         ${hechos().map((h,i)=>`<div style="margin-top:6px">${i+1}. ${esc(h)}</div>`).join('')}
       </div>
 
-      <div class="doc-clause"><b>IV. DERECHO.</b> Son aplicables el artículo 4° de la Constitución Política de los Estados Unidos Mexicanos; los artículos 296, 407, 408, 418, 419, 440, 631 y 632 del Código Civil del Estado de Querétaro; ${marcoProcesal()}; la Ley General de los Derechos de Niñas, Niños y Adolescentes; y la Convención sobre los Derechos del Niño.</div>
+      <div class="doc-clause"><b>IV. DERECHO.</b> Son aplicables el artículo 4° de la Constitución Política de los Estados Unidos Mexicanos; los artículos 296, 300, 302, 407 y 408 del Código Civil del Estado de Querétaro; ${marcoProcesal()}; la Ley General de los Derechos de Niñas, Niños y Adolescentes; y la Convención sobre los Derechos del Niño.</div>
 
       <div class="doc-rule"></div>
       <h3 style="margin:14px 0 4px">${docTitles[state.doc]}</h3>
@@ -937,7 +945,7 @@
 
       <div class="doc-clause"><b>PRIMERA. Antecedentes.</b> Los comparecientes manifiestan que ${g('f_menor_nombre','[menor]')}, nacido en ${g('f_menor_lugar','[lugar]')}, reside de manera habitual en ${g('f_menor_ciudad','[ciudad]')} desde ${g('f_menor_reside','[fecha]')}, cursando estudios en ${g('f_menor_escuela','[escuela]')}. El presente convenio se celebra atendiendo al <b>interés superior de la infancia</b> como principio rector.</div>
 
-      <div class="doc-clause"><b>SEGUNDA. Patria potestad y custodia.</b> Ambas partes acuerdan ${custodiaTxt[state.custodia]}, conforme a los artículos 407, 408, 418 y 419 del Código Civil del Estado de Querétaro. Se fija como domicilio de depósito el ubicado en ${g('f_menor_deposito','[domicilio de depósito]')}.</div>
+      <div class="doc-clause"><b>SEGUNDA. Patria potestad y custodia.</b> Ambas partes acuerdan ${custodiaTxt[state.custodia]}, conforme a los artículos 407 y 408 del Código Civil del Estado de Querétaro. Se fija como domicilio de depósito el ubicado en ${g('f_menor_deposito','[domicilio de depósito]')}.</div>
 
       <div class="doc-clause"><b>TERCERA. Régimen de convivencia.</b> Entre semana, ${g('f_conv_semana','[convivencia entre semana]')}; fines de semana, ${g('f_conv_finde','[convivencia de fin de semana]')}. El progenitor no custodio tendrá comunicación libre por vía telefónica o videollamada con el menor.</div>
 
@@ -949,9 +957,9 @@
 
       <div class="doc-clause"><b>SÉPTIMA. Gastos escolares y médicos.</b> Adicionalmente cubrirá: colegiatura mensual de ${gm('f_colegiatura','[colegiatura]')}, inscripción anual de ${gm('f_matricula','[inscripción]')} y actividades extracurriculares (${g('f_extra','[extracurriculares]')}). ${g('f_madre_gastos','[gastos de la otra parte]')} quedan a cargo del otro progenitor. Los gastos médicos extraordinarios se cubrirán conforme a lo siguiente: ${g('f_medicos','[médicos]')}.</div>
 
-      <div class="doc-clause"><b>OCTAVA. Garantía de la pensión.</b> Para garantizar el cumplimiento de la obligación alimentaria, en términos de los artículos 631 y 632 del Código Civil del Estado de Querétaro, el deudor alimentario constituirá garantía por ${garantiaFrase}, dentro de los sesenta días naturales siguientes a la aprobación del presente convenio.</div>
+      <div class="doc-clause"><b>OCTAVA. Garantía de la pensión.</b> Para garantizar el cumplimiento de la obligación alimentaria, en términos de los artículos 300 y 302 del Código Civil del Estado de Querétaro, el deudor alimentario constituirá garantía, en cualquiera de las formas que dicho precepto autoriza —hipoteca, prenda, fianza o depósito de cantidad bastante—, por ${garantiaFrase}, dentro de los sesenta días naturales siguientes a la aprobación del presente convenio.</div>
 
-      <div class="doc-clause"><b>NOVENA. Compromisos de sana convivencia.</b> Ambos progenitores se obligan a proporcionar al menor un ambiente armónico, a no denostar la figura del otro progenitor ni generar en el menor ideas equívocas respecto de él, conducta que de actualizarse podría dar lugar a lo previsto por el artículo 440 del Código Civil del Estado de Querétaro, a no utilizar al menor como intermediario y a fomentar la relación con ambas familias.</div>
+      <div class="doc-clause"><b>NOVENA. Compromisos de sana convivencia.</b> Ambos progenitores se obligan a proporcionar al menor un ambiente armónico, a no denostar la figura del otro progenitor ni generar en el menor ideas equívocas respecto de él a no utilizar al menor como intermediario y a fomentar la relación con ambas familias.</div>
 
       <div class="doc-clause"><b>DÉCIMA. Jurisdicción y ausencia de vicios.</b> Las partes se someten a la jurisdicción de los tribunales de ${g('f_juzgado','[juzgado]')} y manifiestan que este convenio se celebra de manera libre, voluntaria y de buena fe, sin dolo, error, violencia ni mala fe.</div>
 
@@ -960,7 +968,8 @@
       <div class="doc-clause"><b>POR LO EXPUESTO, A USTED C. JUEZ, ATENTAMENTE PEDIMOS:</b>
         <br><b>PRIMERO.</b> Tenernos por presentados en los términos del presente escrito.
         <br><b>SEGUNDO.</b> Aprobar el convenio que antecede y elevarlo a la categoría de cosa juzgada.
-        <br><b>TERCERO.</b> Ordenar la expedición de copias certificadas que se soliciten.
+        <br><b>TERCERO.</b> Dar la intervención legal al Agente del Ministerio Público adscrito.
+        <br><b>CUARTO.</b> Ordenar la expedición de copias certificadas que se soliciten.
       </div>
 
       <div style="text-align:center;font-size:11.5px;font-weight:700;margin:16px 0 6px">PROTESTAMOS LO NECESARIO</div>
@@ -995,7 +1004,7 @@
     const rows = [
       ['Documento', docTitles[state.doc]],
       ['Juzgado', plain('f_juzgado','—')],
-      ['Marco procesal', state.marco==='cnpcyf' ? 'CNPCyF arts. 587-596' : 'CPC Qro arts. 711-719'],
+      ['Marco procesal', state.marco==='cnpcyf' ? 'CNPCyF arts. 587-596' : (state.doc==='divorcio' ? 'CPC Qro arts. 711-719' : 'CPC Qro arts. 937-944')],
       ['Promovente 1', plain('f_padre_nombre','—')],
       ['Promovente 2', plain('f_madre_nombre','—')],
       ['Menor', plain('f_menor_nombre','—')],
@@ -1169,7 +1178,7 @@
           'Bajo protesta de decir verdad, en términos del artículo 259 del Código de Procedimientos Civiles del Estado de Querétaro, manifestamos que los hechos que a continuación se narran nos constan de manera personal y directa, y que lo aquí expuesto es cierto.'),
 
         clause('II. PRESTACIONES.',
-          `a) La aprobación del convenio contenido en el presente escrito y su elevación a la categoría de cosa juzgada. b) El reconocimiento del régimen de ${custodiaTxt[state.custodia]} respecto de ${v('f_menor_nombre','[el menor]')}. c) La aprobación del régimen de convivencia y de la pensión alimenticia en los términos convenidos.`),
+          `a) La aprobación del convenio contenido en el presente escrito y su elevación a la categoría de cosa juzgada. b) El reconocimiento del régimen de ${custodiaTxt[state.custodia]} respecto de ${v('f_menor_nombre','[el menor]')}. c) La aprobación del régimen de convivencia y de la pensión alimenticia en los términos convenidos. d) Que se dé la intervención que corresponde al Agente del Ministerio Público adscrito, en términos del artículo 940 fracción II del Código de Procedimientos Civiles del Estado de Querétaro.`),
 
         P('III. HECHOS.', {bold:true, align:AlignmentType.LEFT, after:60})
       );
@@ -1177,7 +1186,7 @@
 
       kids.push(
         clause('IV. DERECHO.',
-          `Son aplicables el artículo 4° de la Constitución Política de los Estados Unidos Mexicanos; los artículos 296, 407, 408, 418, 419, 440, 631 y 632 del Código Civil del Estado de Querétaro; ${marcoProcesal()}; la Ley General de los Derechos de Niñas, Niños y Adolescentes; y la Convención sobre los Derechos del Niño.`),
+          `Son aplicables el artículo 4° de la Constitución Política de los Estados Unidos Mexicanos; los artículos 296, 300, 302, 407 y 408 del Código Civil del Estado de Querétaro; ${marcoProcesal()}; la Ley General de los Derechos de Niñas, Niños y Adolescentes; y la Convención sobre los Derechos del Niño.`),
         rule(),
         center(docTitles[state.doc], true, 26),
         center('C L Á U S U L A S', true, 22),
@@ -1186,7 +1195,7 @@
           `Los comparecientes manifiestan que ${v('f_menor_nombre','[menor]')}, nacido en ${v('f_menor_lugar','[lugar]')}, reside de manera habitual en ${v('f_menor_ciudad','[ciudad]')} desde ${v('f_menor_reside','[fecha]')}, donde ha establecido su realidad social, emocional y educativa, cursando estudios en ${v('f_menor_escuela','[escuela]')}. El presente convenio se celebra atendiendo al interés superior de la infancia como principio rector.`),
 
         clause('SEGUNDA. Patria potestad y custodia.',
-          `Ambas partes acuerdan ${custodiaTxt[state.custodia]}, conforme a los artículos 407, 408, 418 y 419 del Código Civil del Estado de Querétaro. Se fija como domicilio de depósito el ubicado en ${v('f_menor_deposito','[domicilio de depósito]')}. En caso de cambio de domicilio, la parte interesada deberá notificarlo por escrito a la otra con sesenta días naturales de anticipación.`),
+          `Ambas partes acuerdan ${custodiaTxt[state.custodia]}, conforme a los artículos 407 y 408 del Código Civil del Estado de Querétaro. Se fija como domicilio de depósito el ubicado en ${v('f_menor_deposito','[domicilio de depósito]')}. En caso de cambio de domicilio, la parte interesada deberá notificarlo por escrito a la otra con sesenta días naturales de anticipación.`),
 
         clause('TERCERA. Régimen de convivencia.',
           `Entre semana, ${v('f_conv_semana','[convivencia entre semana]')}; fines de semana, ${v('f_conv_finde','[convivencia de fin de semana]')}. El progenitor no custodio tendrá derecho a comunicación libre por vía telefónica o videollamada con el menor, sin que la otra parte pueda impedirlo sin justa causa.`),
@@ -1203,7 +1212,7 @@
           `Adicionalmente cubrirá: colegiatura mensual de ${mplain('f_colegiatura','[colegiatura]')}, inscripción anual de ${mplain('f_matricula','[inscripción]')} y actividades extracurriculares (${v('f_extra','[extracurriculares]')}). Quedan a cargo del otro progenitor: ${v('f_madre_gastos','[gastos]')}. Los gastos médicos extraordinarios se cubrirán conforme a lo siguiente: ${v('f_medicos','[médicos]')}.`),
 
         clause('OCTAVA. Garantía de la pensión.',
-          `Para garantizar el cumplimiento de la obligación alimentaria, en términos de los artículos 631 y 632 del Código Civil del Estado de Querétaro, el deudor alimentario constituirá garantía por ${gm_ ? 'el equivalente a '+v('f_garantia_meses','[n]')+' meses de pensión, esto es, '+money(gm_) : '[pendiente: meses de garantía]'}, dentro de los sesenta días naturales siguientes a la aprobación del presente convenio.`),
+          `Para garantizar el cumplimiento de la obligación alimentaria, en términos de los artículos 300 y 302 del Código Civil del Estado de Querétaro, el deudor alimentario constituirá garantía, en cualquiera de las formas que dicho precepto autoriza —hipoteca, prenda, fianza o depósito de cantidad bastante—, por ${gm_ ? 'el equivalente a '+v('f_garantia_meses','[n]')+' meses de pensión, esto es, '+money(gm_) : '[pendiente: meses de garantía]'}, dentro de los sesenta días naturales siguientes a la aprobación del presente convenio.`),
 
         clause('NOVENA. Compromisos de sana convivencia.',
           `Ambos progenitores se obligan a proporcionar al menor un ambiente armónico que permita su desarrollo integral; a no generar ideas equívocas ni denostar la figura del otro progenitor, conducta que de actualizarse podría dar lugar a lo previsto por el artículo 440 del Código Civil del Estado de Querétaro; a no utilizar al menor como intermediario; y a fomentar activamente la relación con ambas familias.`),
@@ -1215,7 +1224,8 @@
         P('POR LO EXPUESTO, A USTED C. JUEZ, ATENTAMENTE PEDIMOS:', {bold:true, align:AlignmentType.LEFT}),
         P('PRIMERO. Tenernos por presentados en los términos del presente escrito.'),
         P('SEGUNDO. Aprobar el convenio que antecede y elevarlo a la categoría de cosa juzgada.'),
-        P('TERCERO. Ordenar la expedición de las copias certificadas que se soliciten.'),
+        P('TERCERO. Dar la intervención legal al Agente del Ministerio Público adscrito.'),
+        P('CUARTO. Ordenar la expedición de las copias certificadas que se soliciten.'),
         center('PROTESTAMOS LO NECESARIO', true, 22),
         center(v('f_juzgado','[ciudad]') + ', a la fecha de su presentación.', false, 20),
         P('', {after:200}),
