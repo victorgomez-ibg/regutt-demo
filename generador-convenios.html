@@ -888,6 +888,58 @@ textarea.gc-input{min-height:84px;resize:vertical;line-height:1.5}
     if(banco) banco.style.display = state.modal === 'transferencia' ? '' : 'none';
   }
 
+  /* ---------- LO QUE CAMBIA SEGÚN EL TRÁMITE ----------
+     Los tres trámites no son el mismo escrito con otro título: cambian las
+     prestaciones, las cláusulas que proceden y lo que se pide al final. */
+  function esDivorcio(){ return state.doc === 'divorcio'; }
+  function soloPension(){ return state.doc === 'pension'; }
+
+  function prestaciones(){
+    if(esDivorcio()){
+      return [
+        'La disolución del vínculo matrimonial que une a los comparecientes, por mutuo consentimiento.',
+        'La aprobación del convenio contenido en el presente escrito, en términos del artículo 252 del Código Civil del Estado de Querétaro <b>[cita por confirmar]</b>.',
+        'La disolución y liquidación de la sociedad conyugal, si bajo ese régimen se contrajo matrimonio.',
+        'En su oportunidad, girar oficio al Oficial del Registro Civil para que levante el acta correspondiente y haga las anotaciones marginales.'
+      ];
+    }
+    if(soloPension()){
+      return [
+        'La aprobación del convenio de pensión alimenticia contenido en el presente escrito y su elevación a la categoría de cosa juzgada.',
+        'La fijación de la pensión alimenticia en los términos y por la cantidad convenidos.',
+        'Que se dé la intervención que corresponde al Agente del Ministerio Público adscrito, en términos del artículo 940 fracción II del Código de Procedimientos Civiles del Estado de Querétaro.'
+      ];
+    }
+    return [
+      'La aprobación del convenio que se contiene en el presente escrito y su elevación a la categoría de cosa juzgada.',
+      'El reconocimiento del régimen de ' + custodiaTxt[state.custodia] + '.',
+      'La aprobación del régimen de convivencia y de la pensión alimenticia en los términos convenidos.',
+      'Que se dé la intervención que corresponde al Agente del Ministerio Público adscrito, en términos del artículo 940 fracción II del Código de Procedimientos Civiles del Estado de Querétaro.'
+    ];
+  }
+  function prestacionesHTML(){
+    const letras = 'abcdefgh';
+    return prestaciones().map((p,i)=> '<br><b>'+letras[i]+')</b> '+p).join('');
+  }
+  function peticiones(){
+    const p = ['Tenernos por presentados en los términos del presente escrito.'];
+    if(esDivorcio()){
+      p.push('Aprobar el convenio que antecede y, en su momento, decretar la disolución del vínculo matrimonial.');
+      p.push('Girar el oficio correspondiente al Oficial del Registro Civil.');
+    } else {
+      p.push('Aprobar el convenio que antecede y elevarlo a la categoría de cosa juzgada.');
+      p.push('Dar la intervención legal al Agente del Ministerio Público adscrito.');
+    }
+    p.push('Ordenar la expedición de las copias certificadas que se soliciten.');
+    return p;
+  }
+  /** Una cláusula solo entra si procede en este trámite. */
+  function aplica(clave){
+    if(soloPension()) return ['antecedentes','pension','gastos','garantia','jurisdiccion'].indexOf(clave) >= 0;
+    if(esDivorcio())  return clave !== 'viajes';
+    return true;
+  }
+
   /* ---------- PREVIEW: ESCRITO JUDICIAL COMPLETO ---------- */
   function hechos(){
     return [
@@ -945,12 +997,7 @@ textarea.gc-input{min-height:84px;resize:vertical;line-height:1.5}
 
       <div class="doc-clause"><b>I. PROTESTA DE LEY.</b> Bajo protesta de decir verdad, en términos del artículo 259 del Código de Procedimientos Civiles del Estado de Querétaro, manifestamos que los hechos que a continuación se narran nos constan de manera personal y directa, y que lo aquí expuesto es cierto.</div>
 
-      <div class="doc-clause"><b>II. PRESTACIONES.</b> De este H. Juzgado solicitamos:
-        <br><b>a)</b> La aprobación del convenio que se contiene en el presente escrito y su elevación a la categoría de cosa juzgada.
-        <br><b>b)</b> El reconocimiento del régimen de ${custodiaTxt[state.custodia]} respecto de ${g('f_menor_nombre','[el menor]')}.
-        <br><b>c)</b> La aprobación del régimen de convivencia y de la pensión alimenticia en los términos convenidos.
-        <br><b>d)</b> Que se dé la intervención que corresponde al Agente del Ministerio Público adscrito, en términos del artículo 940 fracción II del Código de Procedimientos Civiles del Estado de Querétaro.
-      </div>
+      <div class="doc-clause"><b>II. PRESTACIONES.</b> De este H. Juzgado solicitamos:${prestacionesHTML()}</div>
 
       <div class="doc-clause"><b>III. HECHOS.</b>
         ${hechos().map((h,i)=>`<div style="margin-top:6px">${i+1}. ${esc(h)}</div>`).join('')}
@@ -964,13 +1011,13 @@ textarea.gc-input{min-height:84px;resize:vertical;line-height:1.5}
 
       <div class="doc-clause"><b>PRIMERA. Antecedentes.</b> Los comparecientes manifiestan que ${g('f_menor_nombre','[menor]')}, nacido en ${g('f_menor_lugar','[lugar]')}, reside de manera habitual en ${g('f_menor_ciudad','[ciudad]')} desde ${g('f_menor_reside','[fecha]')}, cursando estudios en ${g('f_menor_escuela','[escuela]')}. El presente convenio se celebra atendiendo al <b>interés superior de la infancia</b> como principio rector.</div>
 
-      <div class="doc-clause"><b>SEGUNDA. Patria potestad y custodia.</b> Ambas partes acuerdan ${custodiaTxt[state.custodia]}, conforme a los artículos 407 y 408 del Código Civil del Estado de Querétaro. Se fija como domicilio de depósito el ubicado en ${g('f_menor_deposito','[domicilio de depósito]')}.</div>
+      ${aplica('custodia') ? `<div class="doc-clause"><b>SEGUNDA. Patria potestad y custodia.</b> Ambas partes acuerdan ${custodiaTxt[state.custodia]}, conforme a los artículos 407 y 408 del Código Civil del Estado de Querétaro. Se fija como domicilio de depósito el ubicado en ${g('f_menor_deposito','[domicilio de depósito]')}.</div>` : ''}
 
-      <div class="doc-clause"><b>TERCERA. Régimen de convivencia.</b> Entre semana, ${g('f_conv_semana','[convivencia entre semana]')}; fines de semana, ${g('f_conv_finde','[convivencia de fin de semana]')}. El progenitor no custodio tendrá comunicación libre por vía telefónica o videollamada con el menor.</div>
+      ${aplica('convivencia') ? `<div class="doc-clause"><b>TERCERA. Régimen de convivencia.</b> Entre semana, ${g('f_conv_semana','[convivencia entre semana]')}; fines de semana, ${g('f_conv_finde','[convivencia de fin de semana]')}. El progenitor no custodio tendrá comunicación libre por vía telefónica o videollamada con el menor.</div>` : ''}
 
-      <div class="doc-clause"><b>CUARTA. Periodos vacacionales.</b> Verano: ${g('f_vac_verano','[verano]')}. Diciembre: ${g('f_vac_dic','[diciembre]')}. Semana Santa se dividirá equitativamente entre ambos progenitores.</div>
+      ${aplica('vacaciones') ? `<div class="doc-clause"><b>CUARTA. Periodos vacacionales.</b> Verano: ${g('f_vac_verano','[verano]')}. Diciembre: ${g('f_vac_dic','[diciembre]')}. Semana Santa se dividirá equitativamente entre ambos progenitores.</div>` : ''}
 
-      <div class="doc-clause"><b>QUINTA. Viajes.</b> ${viajeTxt}</div>
+      ${aplica('viajes') ? `<div class="doc-clause"><b>QUINTA. Viajes.</b> ${viajeTxt}</div>` : ''}
 
       <div class="doc-clause"><b>SEXTA. Pensión alimenticia.</b> El deudor alimentario entregará por concepto de pensión alimenticia la cantidad de ${gm('f_pension_monto','[monto exacto]')} de forma ${periodoTxt[val('f_pension_periodo')||'mensual']}, pagadera ${g('f_pension_dia','[día exacto de entrega]')}, ${pagoTxt}. Dicha cantidad se fija conforme al artículo 296 del Código Civil del Estado de Querétaro, atendiendo a la posibilidad de quien debe darla y a la necesidad de quien debe recibirla, y se incrementará anualmente en la misma proporción en que aumente el salario mínimo general vigente.</div>
 
@@ -978,17 +1025,14 @@ textarea.gc-input{min-height:84px;resize:vertical;line-height:1.5}
 
       <div class="doc-clause"><b>OCTAVA. Garantía de la pensión.</b> Para garantizar el cumplimiento de la obligación alimentaria, en términos de los artículos 300 y 302 del Código Civil del Estado de Querétaro, el deudor alimentario constituirá garantía, en cualquiera de las formas que dicho precepto autoriza —hipoteca, prenda, fianza o depósito de cantidad bastante—, por ${garantiaFrase}, dentro de los sesenta días naturales siguientes a la aprobación del presente convenio.</div>
 
-      <div class="doc-clause"><b>NOVENA. Compromisos de sana convivencia.</b> Ambos progenitores se obligan a proporcionar al menor un ambiente armónico, a no denostar la figura del otro progenitor ni generar en el menor ideas equívocas respecto de él a no utilizar al menor como intermediario y a fomentar la relación con ambas familias.</div>
+      ${aplica('compromisos') ? `<div class="doc-clause"><b>NOVENA. Compromisos de sana convivencia.</b> Ambos progenitores se obligan a proporcionar al menor un ambiente armónico, a no denostar la figura del otro progenitor ni generar en el menor ideas equívocas respecto de él a no utilizar al menor como intermediario y a fomentar la relación con ambas familias.</div>` : ''}
 
       <div class="doc-clause"><b>DÉCIMA. Jurisdicción y ausencia de vicios.</b> Las partes se someten a la jurisdicción de los tribunales de ${g('f_juzgado','[juzgado]')} y manifiestan que este convenio se celebra de manera libre, voluntaria y de buena fe, sin dolo, error, violencia ni mala fe.</div>
 
       <div class="doc-rule"></div>
 
       <div class="doc-clause"><b>POR LO EXPUESTO, A USTED C. JUEZ, ATENTAMENTE PEDIMOS:</b>
-        <br><b>PRIMERO.</b> Tenernos por presentados en los términos del presente escrito.
-        <br><b>SEGUNDO.</b> Aprobar el convenio que antecede y elevarlo a la categoría de cosa juzgada.
-        <br><b>TERCERO.</b> Dar la intervención legal al Agente del Ministerio Público adscrito.
-        <br><b>CUARTO.</b> Ordenar la expedición de copias certificadas que se soliciten.
+        ${peticiones().map((t,i)=> '<br><b>'+['PRIMERO','SEGUNDO','TERCERO','CUARTO','QUINTO'][i]+'.</b> '+t).join('')}
       </div>
 
       <div style="text-align:center;font-size:11.5px;font-weight:700;margin:16px 0 6px">PROTESTAMOS LO NECESARIO</div>
@@ -1239,7 +1283,7 @@ textarea.gc-input{min-height:84px;resize:vertical;line-height:1.5}
           'Bajo protesta de decir verdad, en términos del artículo 259 del Código de Procedimientos Civiles del Estado de Querétaro, manifestamos que los hechos que a continuación se narran nos constan de manera personal y directa, y que lo aquí expuesto es cierto.'),
 
         clause('II. PRESTACIONES.',
-          `a) La aprobación del convenio contenido en el presente escrito y su elevación a la categoría de cosa juzgada. b) El reconocimiento del régimen de ${custodiaTxt[state.custodia]} respecto de ${v('f_menor_nombre','[el menor]')}. c) La aprobación del régimen de convivencia y de la pensión alimenticia en los términos convenidos. d) Que se dé la intervención que corresponde al Agente del Ministerio Público adscrito, en términos del artículo 940 fracción II del Código de Procedimientos Civiles del Estado de Querétaro.`),
+          prestaciones().map(function(t,i){ return 'abcdefgh'[i] + ') ' + t.replace(/<[^>]+>/g,''); }).join(' ')),
 
         P('III. HECHOS.', {bold:true, align:AlignmentType.LEFT, after:60})
       );
@@ -1255,16 +1299,16 @@ textarea.gc-input{min-height:84px;resize:vertical;line-height:1.5}
         clause('PRIMERA. Antecedentes.',
           `Los comparecientes manifiestan que ${v('f_menor_nombre','[menor]')}, nacido en ${v('f_menor_lugar','[lugar]')}, reside de manera habitual en ${v('f_menor_ciudad','[ciudad]')} desde ${v('f_menor_reside','[fecha]')}, donde ha establecido su realidad social, emocional y educativa, cursando estudios en ${v('f_menor_escuela','[escuela]')}. El presente convenio se celebra atendiendo al interés superior de la infancia como principio rector.`),
 
-        clause('SEGUNDA. Patria potestad y custodia.',
-          `Ambas partes acuerdan ${custodiaTxt[state.custodia]}, conforme a los artículos 407 y 408 del Código Civil del Estado de Querétaro. Se fija como domicilio de depósito el ubicado en ${v('f_menor_deposito','[domicilio de depósito]')}. En caso de cambio de domicilio, la parte interesada deberá notificarlo por escrito a la otra con sesenta días naturales de anticipación.`),
+        aplica('custodia') ? clause('SEGUNDA. Patria potestad y custodia.',
+          `Ambas partes acuerdan ${custodiaTxt[state.custodia]}, conforme a los artículos 407 y 408 del Código Civil del Estado de Querétaro. Se fija como domicilio de depósito el ubicado en ${v('f_menor_deposito','[domicilio de depósito]')}. En caso de cambio de domicilio, la parte interesada deberá notificarlo por escrito a la otra con sesenta días naturales de anticipación.`) : null,
 
-        clause('TERCERA. Régimen de convivencia.',
-          `Entre semana, ${v('f_conv_semana','[convivencia entre semana]')}; fines de semana, ${v('f_conv_finde','[convivencia de fin de semana]')}. El progenitor no custodio tendrá derecho a comunicación libre por vía telefónica o videollamada con el menor, sin que la otra parte pueda impedirlo sin justa causa.`),
+        aplica('convivencia') ? clause('TERCERA. Régimen de convivencia.',
+          `Entre semana, ${v('f_conv_semana','[convivencia entre semana]')}; fines de semana, ${v('f_conv_finde','[convivencia de fin de semana]')}. El progenitor no custodio tendrá derecho a comunicación libre por vía telefónica o videollamada con el menor, sin que la otra parte pueda impedirlo sin justa causa.`) : null,
 
-        clause('CUARTA. Periodos vacacionales.',
-          `Vacaciones de verano: ${v('f_vac_verano','[verano]')}. Vacaciones de diciembre: ${v('f_vac_dic','[diciembre]')}. Las vacaciones de Semana Santa se dividirán equitativamente entre ambos progenitores, previo acuerdo.`),
+        aplica('vacaciones') ? clause('CUARTA. Periodos vacacionales.',
+          `Vacaciones de verano: ${v('f_vac_verano','[verano]')}. Vacaciones de diciembre: ${v('f_vac_dic','[diciembre]')}. Las vacaciones de Semana Santa se dividirán equitativamente entre ambos progenitores, previo acuerdo.`) : null,
 
-        clause('QUINTA. Viajes.', viajeTxt),
+        aplica('viajes') ? clause('QUINTA. Viajes.', viajeTxt) : null,
 
         clause('SEXTA. Pensión alimenticia.',
           `El deudor alimentario entregará por concepto de pensión alimenticia la cantidad de ${mplain('f_pension_monto','[monto exacto]')} de forma ${periodoTxt[val('f_pension_periodo')||'mensual']}, pagadera ${v('f_pension_dia','[día exacto de entrega]')}, ${pagoTxt}. Dicha cantidad se fija conforme al artículo 296 del Código Civil del Estado de Querétaro, atendiendo a la posibilidad de quien debe darla y a la necesidad de quien debe recibirla, y se incrementará anualmente en la misma proporción en que aumente el salario mínimo general vigente.`),
@@ -1275,18 +1319,17 @@ textarea.gc-input{min-height:84px;resize:vertical;line-height:1.5}
         clause('OCTAVA. Garantía de la pensión.',
           `Para garantizar el cumplimiento de la obligación alimentaria, en términos de los artículos 300 y 302 del Código Civil del Estado de Querétaro, el deudor alimentario constituirá garantía, en cualquiera de las formas que dicho precepto autoriza —hipoteca, prenda, fianza o depósito de cantidad bastante—, por ${gm_ ? 'el equivalente a '+v('f_garantia_meses','[n]')+' meses de pensión, esto es, '+money(gm_) : '[pendiente: meses de garantía]'}, dentro de los sesenta días naturales siguientes a la aprobación del presente convenio.`),
 
-        clause('NOVENA. Compromisos de sana convivencia.',
-          `Ambos progenitores se obligan a proporcionar al menor un ambiente armónico que permita su desarrollo integral; a no generar ideas equívocas ni denostar la figura del otro progenitor, conducta que de actualizarse podría dar lugar a lo previsto por el artículo 440 del Código Civil del Estado de Querétaro; a no utilizar al menor como intermediario; y a fomentar activamente la relación con ambas familias.`),
+        aplica('compromisos') ? clause('NOVENA. Compromisos de sana convivencia.',
+          `Ambos progenitores se obligan a proporcionar al menor un ambiente armónico que permita su desarrollo integral; a no generar ideas equívocas ni denostar la figura del otro progenitor, conducta que de actualizarse podría dar lugar a lo previsto por el artículo 440 del Código Civil del Estado de Querétaro; a no utilizar al menor como intermediario; y a fomentar activamente la relación con ambas familias.`) : null,
 
         clause('DÉCIMA. Jurisdicción y ausencia de vicios.',
           `Para la interpretación, cumplimiento y ejecución del presente convenio, las partes se someten a la jurisdicción de los tribunales competentes de ${v('f_juzgado','[juzgado]')}, y manifiestan que este convenio se celebra de manera libre, voluntaria y de buena fe, sin dolo, error, violencia ni mala fe, no conteniendo cláusula contraria a la moral, al derecho ni a las buenas costumbres.`),
 
         rule(),
         P('POR LO EXPUESTO, A USTED C. JUEZ, ATENTAMENTE PEDIMOS:', {bold:true, align:AlignmentType.LEFT}),
-        P('PRIMERO. Tenernos por presentados en los términos del presente escrito.'),
-        P('SEGUNDO. Aprobar el convenio que antecede y elevarlo a la categoría de cosa juzgada.'),
-        P('TERCERO. Dar la intervención legal al Agente del Ministerio Público adscrito.'),
-        P('CUARTO. Ordenar la expedición de las copias certificadas que se soliciten.'),
+        ...peticiones().map(function(t,i){
+          return P(['PRIMERO','SEGUNDO','TERCERO','CUARTO','QUINTO'][i] + '. ' + t);
+        }),
         center('PROTESTAMOS LO NECESARIO', true, 22),
         center(v('f_juzgado','[ciudad]') + ', a la fecha de su presentación.', false, 20),
         P('', {after:200}),
@@ -1315,7 +1358,8 @@ textarea.gc-input{min-height:84px;resize:vertical;line-height:1.5}
           {align:AlignmentType.LEFT})
       );
 
-      const doc = new Document({ sections:[{ properties:{page:{margin:{top:1080,right:1080,bottom:1080,left:1080}}}, children:kids }]});
+      const hijos = kids.filter(function(k){ return !!k; });
+      const doc = new Document({ sections:[{ properties:{page:{margin:{top:1080,right:1080,bottom:1080,left:1080}}}, children:hijos }]});
       Packer.toBlob(doc).then(blob=>{
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
