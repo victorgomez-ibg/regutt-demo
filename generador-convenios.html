@@ -496,6 +496,15 @@ textarea.gc-input{min-height:84px;resize:vertical;line-height:1.5}
             <button type="button" class="gc2-mini" id="gc2CalcApply">Usar este monto</button>
           </div>
 
+          <div class="gc-field">
+            <label class="gc-label">¿Quién entrega la pensión?</label>
+            <div class="gc-chips" id="gcDeudor">
+              <button type="button" class="gc-chip on" data-deudor="padre">El padre</button>
+              <button type="button" class="gc-chip" data-deudor="madre">La madre</button>
+            </div>
+            <div class="gc-hint">Se ajusta solo según la custodia; cámbialo si en este caso es al revés.</div>
+          </div>
+
           <div class="gc-group-title">Pensión alimenticia</div>
           <div class="gc-field row">
             <div>
@@ -670,7 +679,7 @@ textarea.gc-input{min-height:84px;resize:vertical;line-height:1.5}
   /* ---------- ESTADO ---------- */
   const STEPS = ["Tipo","Progenitores","Menor","Custodia","Pensión","Revisar"];
   let step = 0;
-  const state = { doc:"custodia", custodia:"compartida", viaje:"si", modal:"transferencia", marco:"cpc" };
+  const state = { doc:"custodia", custodia:"compartida", viaje:"si", modal:"transferencia", marco:"cpc", deudor:"padre" };
 
   /* ---------- NÚMEROS A LETRA ---------- */
   const UNI = ['','UNO','DOS','TRES','CUATRO','CINCO','SEIS','SIETE','OCHO','NUEVE','DIEZ',
@@ -796,6 +805,8 @@ textarea.gc-input{min-height:84px;resize:vertical;line-height:1.5}
       $$('.gc-chip', cont).forEach(x=>x.classList.remove('on'));
       c.classList.add('on');
       state[key] = c.dataset[Object.keys(c.dataset)[0]];
+      if(key === 'deudor') state.deudorManual = true;        // decisión del abogado
+      if(key === 'custodia'){ state.deudorManual = false; ajustaDeudor(); }
       sync(); render(); save();
     });
   }
@@ -804,6 +815,7 @@ textarea.gc-input{min-height:84px;resize:vertical;line-height:1.5}
   chipGroup('#gcViajes','viaje');
   chipGroup('#gcModalidad','modal');
   chipGroup('#gcMarco','marco');
+  chipGroup('#gcDeudor','deudor');
 
   /* ---------- HELPERS DE PREVIEW ---------- */
   function esc(s){ return String(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
@@ -828,6 +840,22 @@ textarea.gc-input{min-height:84px;resize:vertical;line-height:1.5}
     padre:"guarda y custodia a favor del padre, conservando ambos progenitores la patria potestad"
   };
   const periodoTxt = { semanal:'semanal', quincenal:'quincenal', mensual:'mensual' };
+
+  /* Un convenio que no dice quién paga no sirve para exigir el pago. */
+  function nombreDeudor(){
+    return (state.deudor === 'madre' ? val('f_madre_nombre') : val('f_padre_nombre')) || '[el deudor alimentario]';
+  }
+  function nombreAcreedor(){
+    return (state.deudor === 'madre' ? val('f_padre_nombre') : val('f_madre_nombre')) || '[quien recibe]';
+  }
+  /* Si la custodia la tiene uno, el otro es quien normalmente entrega la pensión. */
+  function ajustaDeudor(){
+    if(state.deudorManual) return;                            // ya lo decidió una persona
+    if(state.custodia === 'madre') state.deudor = 'padre';
+    else if(state.custodia === 'padre') state.deudor = 'madre';
+    const cont = $('#gcDeudor'); if(!cont) return;
+    $$('.gc-chip',cont).forEach(c=> c.classList.toggle('on', c.dataset.deudor === state.deudor));
+  }
 
   /** Marco procesal: cambia con la entrada en vigor del CNPCyF. */
   /* El divorcio por mutuo consentimiento va por su vía especial (711-719 CPC Qro);
@@ -884,6 +912,7 @@ textarea.gc-input{min-height:84px;resize:vertical;line-height:1.5}
     el.textContent = m ? 'Garantía: ' + money(m) : 'El monto se calcula solo.';
   }
   function sync(){
+    ajustaDeudor();
     const banco = $('#gc2Banco');
     if(banco) banco.style.display = state.modal === 'transferencia' ? '' : 'none';
   }
@@ -1019,11 +1048,11 @@ textarea.gc-input{min-height:84px;resize:vertical;line-height:1.5}
 
       ${aplica('viajes') ? `<div class="doc-clause"><b>QUINTA. Viajes.</b> ${viajeTxt}</div>` : ''}
 
-      <div class="doc-clause"><b>SEXTA. Pensión alimenticia.</b> El deudor alimentario entregará por concepto de pensión alimenticia la cantidad de ${gm('f_pension_monto','[monto exacto]')} de forma ${periodoTxt[val('f_pension_periodo')||'mensual']}, pagadera ${g('f_pension_dia','[día exacto de entrega]')}, ${pagoTxt}. Dicha cantidad se fija conforme al artículo 296 del Código Civil del Estado de Querétaro, atendiendo a la posibilidad de quien debe darla y a la necesidad de quien debe recibirla, y se incrementará anualmente en la misma proporción en que aumente el salario mínimo general vigente.</div>
+      <div class="doc-clause"><b>SEXTA. Pensión alimenticia.</b> ${esc(nombreDeudor())}, como deudor alimentario, entregará a ${esc(nombreAcreedor())} por concepto de pensión alimenticia la cantidad de ${gm('f_pension_monto','[monto exacto]')} de forma ${periodoTxt[val('f_pension_periodo')||'mensual']}, pagadera ${g('f_pension_dia','[día exacto de entrega]')}, ${pagoTxt}. Dicha cantidad se fija conforme al artículo 296 del Código Civil del Estado de Querétaro, atendiendo a la posibilidad de quien debe darla y a la necesidad de quien debe recibirla, y se incrementará anualmente en la misma proporción en que aumente el salario mínimo general vigente.</div>
 
-      <div class="doc-clause"><b>SÉPTIMA. Gastos escolares y médicos.</b> Adicionalmente cubrirá: colegiatura mensual de ${gm('f_colegiatura','[colegiatura]')}, inscripción anual de ${gm('f_matricula','[inscripción]')} y actividades extracurriculares (${g('f_extra','[extracurriculares]')}). ${g('f_madre_gastos','[gastos de la otra parte]')} quedan a cargo del otro progenitor. Los gastos médicos extraordinarios se cubrirán conforme a lo siguiente: ${g('f_medicos','[médicos]')}.</div>
+      <div class="doc-clause"><b>SÉPTIMA. Gastos escolares y médicos.</b> Adicionalmente ${esc(nombreDeudor())} cubrirá: colegiatura mensual de ${gm('f_colegiatura','[colegiatura]')}, inscripción anual de ${gm('f_matricula','[inscripción]')} y actividades extracurriculares (${g('f_extra','[extracurriculares]')}). ${g('f_madre_gastos','[gastos de la otra parte]')} quedan a cargo del otro progenitor. Los gastos médicos extraordinarios se cubrirán conforme a lo siguiente: ${g('f_medicos','[médicos]')}.</div>
 
-      <div class="doc-clause"><b>OCTAVA. Garantía de la pensión.</b> Para garantizar el cumplimiento de la obligación alimentaria, en términos de los artículos 300 y 302 del Código Civil del Estado de Querétaro, el deudor alimentario constituirá garantía, en cualquiera de las formas que dicho precepto autoriza —hipoteca, prenda, fianza o depósito de cantidad bastante—, por ${garantiaFrase}, dentro de los sesenta días naturales siguientes a la aprobación del presente convenio.</div>
+      <div class="doc-clause"><b>OCTAVA. Garantía de la pensión.</b> Para garantizar el cumplimiento de la obligación alimentaria, en términos de los artículos 300 y 302 del Código Civil del Estado de Querétaro, ${esc(nombreDeudor())}, como deudor alimentario, constituirá garantía, en cualquiera de las formas que dicho precepto autoriza —hipoteca, prenda, fianza o depósito de cantidad bastante—, por ${garantiaFrase}, dentro de los sesenta días naturales siguientes a la aprobación del presente convenio.</div>
 
       ${aplica('compromisos') ? `<div class="doc-clause"><b>NOVENA. Compromisos de sana convivencia.</b> Ambos progenitores se obligan a proporcionar al menor un ambiente armónico, a no denostar la figura del otro progenitor ni generar en el menor ideas equívocas respecto de él a no utilizar al menor como intermediario y a fomentar la relación con ambas familias.</div>` : ''}
 
@@ -1073,6 +1102,7 @@ textarea.gc-input{min-height:84px;resize:vertical;line-height:1.5}
       ['Menor', plain('f_menor_nombre','—')],
       ['Custodia', {compartida:'Compartida',madre:'A la madre',padre:'Al padre'}[state.custodia]],
       ['Pensión', val('f_pension_monto') ? money(val('f_pension_monto'))+' '+(periodoTxt[val('f_pension_periodo')||'mensual']) : '—'],
+      ['Paga la pensión', nombreDeudor()],
       ['Día de entrega', plain('f_pension_dia','—')],
       ['Modalidad', state.modal==='transferencia' ? 'Transferencia' : 'Efectivo'],
       ['CLABE', state.modal==='transferencia' ? (val('f_clabe') ? (clabeValida(val('f_clabe'))?'Válida':'INVÁLIDA') : '—') : 'No aplica'],
@@ -1311,13 +1341,13 @@ textarea.gc-input{min-height:84px;resize:vertical;line-height:1.5}
         aplica('viajes') ? clause('QUINTA. Viajes.', viajeTxt) : null,
 
         clause('SEXTA. Pensión alimenticia.',
-          `El deudor alimentario entregará por concepto de pensión alimenticia la cantidad de ${mplain('f_pension_monto','[monto exacto]')} de forma ${periodoTxt[val('f_pension_periodo')||'mensual']}, pagadera ${v('f_pension_dia','[día exacto de entrega]')}, ${pagoTxt}. Dicha cantidad se fija conforme al artículo 296 del Código Civil del Estado de Querétaro, atendiendo a la posibilidad de quien debe darla y a la necesidad de quien debe recibirla, y se incrementará anualmente en la misma proporción en que aumente el salario mínimo general vigente.`),
+          `${nombreDeudor()}, como deudor alimentario, entregará a ${nombreAcreedor()} por concepto de pensión alimenticia la cantidad de ${mplain('f_pension_monto','[monto exacto]')} de forma ${periodoTxt[val('f_pension_periodo')||'mensual']}, pagadera ${v('f_pension_dia','[día exacto de entrega]')}, ${pagoTxt}. Dicha cantidad se fija conforme al artículo 296 del Código Civil del Estado de Querétaro, atendiendo a la posibilidad de quien debe darla y a la necesidad de quien debe recibirla, y se incrementará anualmente en la misma proporción en que aumente el salario mínimo general vigente.`),
 
         clause('SÉPTIMA. Gastos escolares y médicos.',
-          `Adicionalmente cubrirá: colegiatura mensual de ${mplain('f_colegiatura','[colegiatura]')}, inscripción anual de ${mplain('f_matricula','[inscripción]')} y actividades extracurriculares (${v('f_extra','[extracurriculares]')}). Quedan a cargo del otro progenitor: ${v('f_madre_gastos','[gastos]')}. Los gastos médicos extraordinarios se cubrirán conforme a lo siguiente: ${v('f_medicos','[médicos]')}.`),
+          `Adicionalmente ${nombreDeudor()} cubrirá: colegiatura mensual de ${mplain('f_colegiatura','[colegiatura]')}, inscripción anual de ${mplain('f_matricula','[inscripción]')} y actividades extracurriculares (${v('f_extra','[extracurriculares]')}). Quedan a cargo del otro progenitor: ${v('f_madre_gastos','[gastos]')}. Los gastos médicos extraordinarios se cubrirán conforme a lo siguiente: ${v('f_medicos','[médicos]')}.`),
 
         clause('OCTAVA. Garantía de la pensión.',
-          `Para garantizar el cumplimiento de la obligación alimentaria, en términos de los artículos 300 y 302 del Código Civil del Estado de Querétaro, el deudor alimentario constituirá garantía, en cualquiera de las formas que dicho precepto autoriza —hipoteca, prenda, fianza o depósito de cantidad bastante—, por ${gm_ ? 'el equivalente a '+v('f_garantia_meses','[n]')+' meses de pensión, esto es, '+money(gm_) : '[pendiente: meses de garantía]'}, dentro de los sesenta días naturales siguientes a la aprobación del presente convenio.`),
+          `Para garantizar el cumplimiento de la obligación alimentaria, en términos de los artículos 300 y 302 del Código Civil del Estado de Querétaro, ${nombreDeudor()}, como deudor alimentario, constituirá garantía, en cualquiera de las formas que dicho precepto autoriza —hipoteca, prenda, fianza o depósito de cantidad bastante—, por ${gm_ ? 'el equivalente a '+v('f_garantia_meses','[n]')+' meses de pensión, esto es, '+money(gm_) : '[pendiente: meses de garantía]'}, dentro de los sesenta días naturales siguientes a la aprobación del presente convenio.`),
 
         aplica('compromisos') ? clause('NOVENA. Compromisos de sana convivencia.',
           `Ambos progenitores se obligan a proporcionar al menor un ambiente armónico que permita su desarrollo integral; a no generar ideas equívocas ni denostar la figura del otro progenitor, conducta que de actualizarse podría dar lugar a lo previsto por el artículo 440 del Código Civil del Estado de Querétaro; a no utilizar al menor como intermediario; y a fomentar activamente la relación con ambas familias.`) : null,
