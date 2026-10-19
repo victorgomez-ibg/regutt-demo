@@ -920,6 +920,12 @@ textarea.gc-input{min-height:84px;resize:vertical;line-height:1.5}
   /* ---------- LO QUE CAMBIA SEGÚN EL TRÁMITE ----------
      Los tres trámites no son el mismo escrito con otro título: cambian las
      prestaciones, las cláusulas que proceden y lo que se pide al final. */
+  const ORDINALES = ['PRIMERA','SEGUNDA','TERCERA','CUARTA','QUINTA','SEXTA','SÉPTIMA',
+                     'OCTAVA','NOVENA','DÉCIMA','DÉCIMA PRIMERA','DÉCIMA SEGUNDA'];
+  let _ord = 0;
+  function ordReset(){ _ord = 0; }
+  function ord(){ return ORDINALES[_ord++] || ('CLÁUSULA ' + (_ord)); }
+
   function esDivorcio(){ return state.doc === 'divorcio'; }
   function soloPension(){ return state.doc === 'pension'; }
 
@@ -980,6 +986,7 @@ textarea.gc-input{min-height:84px;resize:vertical;line-height:1.5}
   }
 
   function render(){
+    ordReset();
     const d = $('#gcDoc');
     const viajeTxt = state.viaje==='si'
       ? 'Ambos progenitores podrán viajar con el menor al extranjero, previa autorización escrita del otro, conforme al Convenio de La Haya sobre los Aspectos Civiles de la Sustracción Internacional de Menores.'
@@ -1038,25 +1045,25 @@ textarea.gc-input{min-height:84px;resize:vertical;line-height:1.5}
       <h3 style="margin:14px 0 4px">${docTitles[state.doc]}</h3>
       <div class="doc-sub">C L Á U S U L A S</div>
 
-      <div class="doc-clause"><b>PRIMERA. Antecedentes.</b> Los comparecientes manifiestan que ${g('f_menor_nombre','[menor]')}, nacido en ${g('f_menor_lugar','[lugar]')}, reside de manera habitual en ${g('f_menor_ciudad','[ciudad]')} desde ${g('f_menor_reside','[fecha]')}, cursando estudios en ${g('f_menor_escuela','[escuela]')}. El presente convenio se celebra atendiendo al <b>interés superior de la infancia</b> como principio rector.</div>
+      <div class="doc-clause"><b>${ord()}. Antecedentes.</b> Los comparecientes manifiestan que ${g('f_menor_nombre','[menor]')}, nacido en ${g('f_menor_lugar','[lugar]')}, reside de manera habitual en ${g('f_menor_ciudad','[ciudad]')} desde ${g('f_menor_reside','[fecha]')}, cursando estudios en ${g('f_menor_escuela','[escuela]')}. El presente convenio se celebra atendiendo al <b>interés superior de la infancia</b> como principio rector.</div>
 
-      ${aplica('custodia') ? `<div class="doc-clause"><b>SEGUNDA. Patria potestad y custodia.</b> Ambas partes acuerdan ${custodiaTxt[state.custodia]}, conforme a los artículos 407 y 408 del Código Civil del Estado de Querétaro. Se fija como domicilio de depósito el ubicado en ${g('f_menor_deposito','[domicilio de depósito]')}.</div>` : ''}
+      ${aplica('custodia') ? `<div class="doc-clause"><b>${ord()}. Patria potestad y custodia.</b> Ambas partes acuerdan ${custodiaTxt[state.custodia]}, conforme a los artículos 407 y 408 del Código Civil del Estado de Querétaro. Se fija como domicilio de depósito el ubicado en ${g('f_menor_deposito','[domicilio de depósito]')}.</div>` : ''}
 
-      ${aplica('convivencia') ? `<div class="doc-clause"><b>TERCERA. Régimen de convivencia.</b> Entre semana, ${g('f_conv_semana','[convivencia entre semana]')}; fines de semana, ${g('f_conv_finde','[convivencia de fin de semana]')}. El progenitor no custodio tendrá comunicación libre por vía telefónica o videollamada con el menor.</div>` : ''}
+      ${aplica('convivencia') ? `<div class="doc-clause"><b>${ord()}. Régimen de convivencia.</b> Entre semana, ${g('f_conv_semana','[convivencia entre semana]')}; fines de semana, ${g('f_conv_finde','[convivencia de fin de semana]')}. El progenitor no custodio tendrá comunicación libre por vía telefónica o videollamada con el menor.</div>` : ''}
 
-      ${aplica('vacaciones') ? `<div class="doc-clause"><b>CUARTA. Periodos vacacionales.</b> Verano: ${g('f_vac_verano','[verano]')}. Diciembre: ${g('f_vac_dic','[diciembre]')}. Semana Santa se dividirá equitativamente entre ambos progenitores.</div>` : ''}
+      ${aplica('vacaciones') ? `<div class="doc-clause"><b>${ord()}. Periodos vacacionales.</b> Verano: ${g('f_vac_verano','[verano]')}. Diciembre: ${g('f_vac_dic','[diciembre]')}. Semana Santa se dividirá equitativamente entre ambos progenitores.</div>` : ''}
 
-      ${aplica('viajes') ? `<div class="doc-clause"><b>QUINTA. Viajes.</b> ${viajeTxt}</div>` : ''}
+      ${aplica('viajes') ? `<div class="doc-clause"><b>${ord()}. Viajes.</b> ${viajeTxt}</div>` : ''}
 
-      <div class="doc-clause"><b>SEXTA. Pensión alimenticia.</b> ${esc(nombreDeudor())}, como deudor alimentario, entregará a ${esc(nombreAcreedor())} por concepto de pensión alimenticia la cantidad de ${gm('f_pension_monto','[monto exacto]')} de forma ${periodoTxt[val('f_pension_periodo')||'mensual']}, pagadera ${g('f_pension_dia','[día exacto de entrega]')}, ${pagoTxt}. Dicha cantidad se fija conforme al artículo 296 del Código Civil del Estado de Querétaro, atendiendo a la posibilidad de quien debe darla y a la necesidad de quien debe recibirla, y se incrementará anualmente en la misma proporción en que aumente el salario mínimo general vigente.</div>
+      <div class="doc-clause"><b>${ord()}. Pensión alimenticia.</b> ${esc(nombreDeudor())}, como deudor alimentario, entregará a ${esc(nombreAcreedor())} por concepto de pensión alimenticia la cantidad de ${gm('f_pension_monto','[monto exacto]')} de forma ${periodoTxt[val('f_pension_periodo')||'mensual']}, pagadera ${g('f_pension_dia','[día exacto de entrega]')}, ${pagoTxt}. Dicha cantidad se fija conforme al artículo 296 del Código Civil del Estado de Querétaro, atendiendo a la posibilidad de quien debe darla y a la necesidad de quien debe recibirla, y se incrementará anualmente en la misma proporción en que aumente el salario mínimo general vigente.</div>
 
-      <div class="doc-clause"><b>SÉPTIMA. Gastos escolares y médicos.</b> Adicionalmente ${esc(nombreDeudor())} cubrirá: colegiatura mensual de ${gm('f_colegiatura','[colegiatura]')}, inscripción anual de ${gm('f_matricula','[inscripción]')} y actividades extracurriculares (${g('f_extra','[extracurriculares]')}). ${g('f_madre_gastos','[gastos de la otra parte]')} quedan a cargo del otro progenitor. Los gastos médicos extraordinarios se cubrirán conforme a lo siguiente: ${g('f_medicos','[médicos]')}.</div>
+      <div class="doc-clause"><b>${ord()}. Gastos escolares y médicos.</b> Adicionalmente ${esc(nombreDeudor())} cubrirá: colegiatura mensual de ${gm('f_colegiatura','[colegiatura]')}, inscripción anual de ${gm('f_matricula','[inscripción]')} y actividades extracurriculares (${g('f_extra','[extracurriculares]')}). ${g('f_madre_gastos','[gastos de la otra parte]')} quedan a cargo del otro progenitor. Los gastos médicos extraordinarios se cubrirán conforme a lo siguiente: ${g('f_medicos','[médicos]')}.</div>
 
-      <div class="doc-clause"><b>OCTAVA. Garantía de la pensión.</b> Para garantizar el cumplimiento de la obligación alimentaria, en términos de los artículos 300 y 302 del Código Civil del Estado de Querétaro, ${esc(nombreDeudor())}, como deudor alimentario, constituirá garantía, en cualquiera de las formas que dicho precepto autoriza —hipoteca, prenda, fianza o depósito de cantidad bastante—, por ${garantiaFrase}, dentro de los sesenta días naturales siguientes a la aprobación del presente convenio.</div>
+      <div class="doc-clause"><b>${ord()}. Garantía de la pensión.</b> Para garantizar el cumplimiento de la obligación alimentaria, en términos de los artículos 300 y 302 del Código Civil del Estado de Querétaro, ${esc(nombreDeudor())}, como deudor alimentario, constituirá garantía, en cualquiera de las formas que dicho precepto autoriza —hipoteca, prenda, fianza o depósito de cantidad bastante—, por ${garantiaFrase}, dentro de los sesenta días naturales siguientes a la aprobación del presente convenio.</div>
 
-      ${aplica('compromisos') ? `<div class="doc-clause"><b>NOVENA. Compromisos de sana convivencia.</b> Ambos progenitores se obligan a proporcionar al menor un ambiente armónico, a no denostar la figura del otro progenitor ni generar en el menor ideas equívocas respecto de él a no utilizar al menor como intermediario y a fomentar la relación con ambas familias.</div>` : ''}
+      ${aplica('compromisos') ? `<div class="doc-clause"><b>${ord()}. Compromisos de sana convivencia.</b> Ambos progenitores se obligan a proporcionar al menor un ambiente armónico, a no denostar la figura del otro progenitor ni generar en el menor ideas equívocas respecto de él a no utilizar al menor como intermediario y a fomentar la relación con ambas familias.</div>` : ''}
 
-      <div class="doc-clause"><b>DÉCIMA. Jurisdicción y ausencia de vicios.</b> Las partes se someten a la jurisdicción de los tribunales de ${g('f_juzgado','[juzgado]')} y manifiestan que este convenio se celebra de manera libre, voluntaria y de buena fe, sin dolo, error, violencia ni mala fe.</div>
+      <div class="doc-clause"><b>${ord()}. Jurisdicción y ausencia de vicios.</b> Las partes se someten a la jurisdicción de los tribunales de ${g('f_juzgado','[juzgado]')} y manifiestan que este convenio se celebra de manera libre, voluntaria y de buena fe, sin dolo, error, violencia ni mala fe.</div>
 
       <div class="doc-rule"></div>
 
@@ -1288,6 +1295,7 @@ textarea.gc-input{min-height:84px;resize:vertical;line-height:1.5}
         ? 'mediante transferencia electrónica a la cuenta señalada en el ANEXO ÚNICO de este convenio'
         : 'en efectivo, recabando el recibo correspondiente';
 
+      ordReset();
       const kids = [];
 
       if(val('f_desp_nombre') || val('f_desp_abogado')){
@@ -1326,33 +1334,33 @@ textarea.gc-input{min-height:84px;resize:vertical;line-height:1.5}
         center(docTitles[state.doc], true, 26),
         center('C L Á U S U L A S', true, 22),
 
-        clause('PRIMERA. Antecedentes.',
+        clause(ord() + '. Antecedentes.',
           `Los comparecientes manifiestan que ${v('f_menor_nombre','[menor]')}, nacido en ${v('f_menor_lugar','[lugar]')}, reside de manera habitual en ${v('f_menor_ciudad','[ciudad]')} desde ${v('f_menor_reside','[fecha]')}, donde ha establecido su realidad social, emocional y educativa, cursando estudios en ${v('f_menor_escuela','[escuela]')}. El presente convenio se celebra atendiendo al interés superior de la infancia como principio rector.`),
 
-        aplica('custodia') ? clause('SEGUNDA. Patria potestad y custodia.',
+        aplica('custodia') ? clause(ord() + '. Patria potestad y custodia.',
           `Ambas partes acuerdan ${custodiaTxt[state.custodia]}, conforme a los artículos 407 y 408 del Código Civil del Estado de Querétaro. Se fija como domicilio de depósito el ubicado en ${v('f_menor_deposito','[domicilio de depósito]')}. En caso de cambio de domicilio, la parte interesada deberá notificarlo por escrito a la otra con sesenta días naturales de anticipación.`) : null,
 
-        aplica('convivencia') ? clause('TERCERA. Régimen de convivencia.',
+        aplica('convivencia') ? clause(ord() + '. Régimen de convivencia.',
           `Entre semana, ${v('f_conv_semana','[convivencia entre semana]')}; fines de semana, ${v('f_conv_finde','[convivencia de fin de semana]')}. El progenitor no custodio tendrá derecho a comunicación libre por vía telefónica o videollamada con el menor, sin que la otra parte pueda impedirlo sin justa causa.`) : null,
 
-        aplica('vacaciones') ? clause('CUARTA. Periodos vacacionales.',
+        aplica('vacaciones') ? clause(ord() + '. Periodos vacacionales.',
           `Vacaciones de verano: ${v('f_vac_verano','[verano]')}. Vacaciones de diciembre: ${v('f_vac_dic','[diciembre]')}. Las vacaciones de Semana Santa se dividirán equitativamente entre ambos progenitores, previo acuerdo.`) : null,
 
-        aplica('viajes') ? clause('QUINTA. Viajes.', viajeTxt) : null,
+        aplica('viajes') ? clause(ord() + '. Viajes.', viajeTxt) : null,
 
-        clause('SEXTA. Pensión alimenticia.',
+        clause(ord() + '. Pensión alimenticia.',
           `${nombreDeudor()}, como deudor alimentario, entregará a ${nombreAcreedor()} por concepto de pensión alimenticia la cantidad de ${mplain('f_pension_monto','[monto exacto]')} de forma ${periodoTxt[val('f_pension_periodo')||'mensual']}, pagadera ${v('f_pension_dia','[día exacto de entrega]')}, ${pagoTxt}. Dicha cantidad se fija conforme al artículo 296 del Código Civil del Estado de Querétaro, atendiendo a la posibilidad de quien debe darla y a la necesidad de quien debe recibirla, y se incrementará anualmente en la misma proporción en que aumente el salario mínimo general vigente.`),
 
-        clause('SÉPTIMA. Gastos escolares y médicos.',
+        clause(ord() + '. Gastos escolares y médicos.',
           `Adicionalmente ${nombreDeudor()} cubrirá: colegiatura mensual de ${mplain('f_colegiatura','[colegiatura]')}, inscripción anual de ${mplain('f_matricula','[inscripción]')} y actividades extracurriculares (${v('f_extra','[extracurriculares]')}). Quedan a cargo del otro progenitor: ${v('f_madre_gastos','[gastos]')}. Los gastos médicos extraordinarios se cubrirán conforme a lo siguiente: ${v('f_medicos','[médicos]')}.`),
 
-        clause('OCTAVA. Garantía de la pensión.',
+        clause(ord() + '. Garantía de la pensión.',
           `Para garantizar el cumplimiento de la obligación alimentaria, en términos de los artículos 300 y 302 del Código Civil del Estado de Querétaro, ${nombreDeudor()}, como deudor alimentario, constituirá garantía, en cualquiera de las formas que dicho precepto autoriza —hipoteca, prenda, fianza o depósito de cantidad bastante—, por ${gm_ ? 'el equivalente a '+v('f_garantia_meses','[n]')+' meses de pensión, esto es, '+money(gm_) : '[pendiente: meses de garantía]'}, dentro de los sesenta días naturales siguientes a la aprobación del presente convenio.`),
 
-        aplica('compromisos') ? clause('NOVENA. Compromisos de sana convivencia.',
+        aplica('compromisos') ? clause(ord() + '. Compromisos de sana convivencia.',
           `Ambos progenitores se obligan a proporcionar al menor un ambiente armónico que permita su desarrollo integral; a no generar ideas equívocas ni denostar la figura del otro progenitor, conducta que de actualizarse podría dar lugar a lo previsto por el artículo 440 del Código Civil del Estado de Querétaro; a no utilizar al menor como intermediario; y a fomentar activamente la relación con ambas familias.`) : null,
 
-        clause('DÉCIMA. Jurisdicción y ausencia de vicios.',
+        clause(ord() + '. Jurisdicción y ausencia de vicios.',
           `Para la interpretación, cumplimiento y ejecución del presente convenio, las partes se someten a la jurisdicción de los tribunales competentes de ${v('f_juzgado','[juzgado]')}, y manifiestan que este convenio se celebra de manera libre, voluntaria y de buena fe, sin dolo, error, violencia ni mala fe, no conteniendo cláusula contraria a la moral, al derecho ni a las buenas costumbres.`),
 
         rule(),
