@@ -24,6 +24,8 @@
   font-family:var(--font-body); color:var(--ink); line-height:1.55; display:block; width:100%;
 }
 #regutt-root button{font-family:inherit;cursor:pointer;border:none;background:none}
+/* el reset de arriba lleva id y gana por especificidad a las clases de componente:
+   sin volver a declararlas con el id, los botones-chip salían sin pastilla. */
 #regutt-root input,#regutt-root select,#regutt-root textarea{font-family:inherit;font-size:15px;color:var(--ink)}
 
 /* ====================== IMPRESIÓN (sin ventana emergente: funciona en iOS) ====================== */
@@ -69,9 +71,9 @@
 /* ====================== BARRA DE CASOS ====================== */
 .rg-bar{margin:14px 0 6px;padding:12px 14px;background:#fff;border:1px solid var(--line);border-radius:12px}
 .rg-bar-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.rg-mini{font-size:12.5px;font-weight:700;padding:8px 12px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink)}
-.rg-mini:hover{background:var(--paper-2)}
-.rg-mini.danger{color:var(--red);border-color:#e7cccc}
+#regutt-root .rg-mini{font-size:12.5px;font-weight:700;padding:8px 12px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--ink)}
+#regutt-root .rg-mini:hover{background:var(--paper-2)}
+#regutt-root .rg-mini.danger{color:var(--red);border-color:#e7cccc}
 .rg-select{font-size:12.5px;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:#fff;max-width:280px}
 .rg-auto{font-size:11.5px;color:var(--green);margin-left:auto;font-weight:600}
 @media(max-width:600px){.rg-auto{margin-left:0;width:100%}}
@@ -123,10 +125,10 @@
   text-transform:uppercase;font-weight:700;color:var(--gold)}
 .rg-group-title::after{content:"";flex:1;height:1px;background:var(--line)}
 .rg-chips{display:flex;gap:8px;flex-wrap:wrap}
-.rg-chip{padding:9px 14px;border:1.5px solid var(--line);border-radius:100px;font-size:13px;background:#fdfcf9;
+#regutt-root .rg-chip{padding:9px 14px;border:1.5px solid var(--line);border-radius:100px;font-size:13px;background:#fdfcf9;
   color:var(--ink-2);transition:.2s;font-weight:600;text-align:left}
-.rg-chip:hover{border-color:var(--gold)}
-.rg-chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+#regutt-root .rg-chip:hover{border-color:var(--gold)}
+#regutt-root .rg-chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
 .rg-person{border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px;background:#fdfcf9}
 .rg-person-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
 .rg-person-head b{font-size:13px;color:var(--ink-2)}
@@ -153,14 +155,14 @@
 
 /* ====================== NAV ====================== */
 .rg-nav{display:flex;justify-content:space-between;gap:12px;padding:16px 22px 18px;border-top:1px solid var(--line);flex-wrap:wrap}
-.rg-btn{padding:12px 22px;border-radius:100px;font-size:14px;font-weight:700;transition:.25s;display:inline-flex;align-items:center;gap:8px}
-.rg-btn-primary{background:var(--ink);color:#fff}
-.rg-btn-primary:hover{background:#1b2f52;transform:translateY(-1px)}
-.rg-btn-ghost{background:transparent;color:var(--ink-2);border:1.5px solid var(--line)}
-.rg-btn-ghost:hover{border-color:var(--ink-2)}
-.rg-btn-gold{background:linear-gradient(135deg,var(--gold),#c9a54e);color:#fff}
-.rg-btn-gold:hover{transform:translateY(-1px)}
-.rg-btn:disabled{opacity:.45;cursor:not-allowed;transform:none!important}
+#regutt-root .rg-btn{padding:12px 22px;border-radius:100px;font-size:14px;font-weight:700;transition:.25s;display:inline-flex;align-items:center;gap:8px}
+#regutt-root .rg-btn-primary{background:var(--ink);color:#fff}
+#regutt-root .rg-btn-primary:hover{background:#1b2f52;transform:translateY(-1px)}
+#regutt-root .rg-btn-ghost{background:transparent;color:var(--ink-2);border:1.5px solid var(--line)}
+#regutt-root .rg-btn-ghost:hover{border-color:var(--ink-2)}
+#regutt-root .rg-btn-gold{background:linear-gradient(135deg,var(--gold),#c9a54e);color:#fff}
+#regutt-root .rg-btn-gold:hover{transform:translateY(-1px)}
+#regutt-root .rg-btn:disabled{opacity:.45;cursor:not-allowed;transform:none!important}
 
 /* ====================== PREVIEW ====================== */
 .rg-prev-wrap{position:sticky;top:16px}
@@ -543,6 +545,111 @@ var PAQUETE_JURISDICCION = {
       articulos:['936 del Código de Procedimientos Civiles','1477 del Código Civil'],
       avisoSinSegunda:'La vivienda sería de interés social, pero sin designación de beneficiarios el trámite notarial no opera: en ese supuesto el juicio sucesorio sí es el camino. Confírmalo con el organismo de vivienda antes de descartar nada.',
       aviso:'Tramitar un juicio sucesorio en este caso le costaría al cliente meses y dinero por algo que se resuelve con el notario en una semana: la transmisión se hace ante notario dentro de los siete días siguientes y el instrumento sirve como título de propiedad, sin necesidad de tramitar la sucesión ni de designar albacea (arts. 936 del Código de Procedimientos Civiles y 1477 del Código Civil de la entidad). AVISO: qué leyes conceptúan una vivienda como de interés social o popular en esta entidad está NO VERIFICADO por el equipo legal, así que esto hay que confirmarlo con el notario antes de descartar el juicio; lo que el generador hace es no emitir la denuncia a ciegas.' }
+  },
+
+  /* ============================================================
+     DIAGNÓSTICO DE ENTRADA
+     El abogado llega con un caso, no con un tipo de documento en la cabeza.
+     Esto es configuración: preguntas, a qué tipo llevan y qué precargan.
+     El motor solo las recorre. Recomienda y explica; no elige por nadie,
+     no esconde tipos y se puede saltar.
+     ============================================================ */
+  diagnostico:{
+    titulo:'¿Qué caso traes?',
+    nota:'Cuatro preguntas sobre el caso real. Al final te digo qué documento procede y por qué. Si ya sabes cuál necesitas, sáltatelo.',
+    preguntas:[
+      { id:'que_quiere', pregunta:'¿Qué quiere resolver el cliente?',
+        ayuda:'Lo que viene a pedir, en sus palabras.',
+        opciones:[
+          { clave:'transmitir', etiqueta:'Vender o comprar un inmueble' },
+          { clave:'ceder_posesion', etiqueta:'Pasar la posesión de un predio sin escrituras',
+            recomienda:[{tipo:'cesion_derechos_posesorios', porque:'Es lo que procede cuando lo que se transmite es la posesión y no el dominio, y es lo que permite que el cesionario sume después el tiempo del cedente.'}] },
+          { clave:'apartar', etiqueta:'Apartar un inmueble para comprarlo después',
+            recomienda:[{tipo:'promesa_compraventa_arras', porque:'Obligación de hacer con arras confirmatorias: fija precio, plazo y consecuencias del incumplimiento.'}] },
+          { clave:'titular', etiqueta:'Regularizar: convertir una posesión en propiedad' },
+          { clave:'herencia', etiqueta:'Repartir los bienes de alguien que falleció' },
+          { clave:'arrendar', etiqueta:'Rentar un inmueble' },
+          { clave:'deuda', etiqueta:'Documentar una deuda y su forma de pago',
+            recomienda:[{tipo:'reconocimiento_adeudo', porque:'Deja la deuda en cantidad líquida con su causa de deber, que es lo que después permite cobrarla por la vía ejecutiva.'}] },
+          { clave:'linderos', etiqueta:'Fijar o aclarar linderos con el vecino',
+            recomienda:[{tipo:'apeo_y_deslinde', porque:'Es la figura propia para deslindar, y no un reconocimiento de propiedad, que no fija linderos ni crea título.'}] },
+          { clave:'reconocer', etiqueta:'Que un tercero reconozca que el predio es del cliente',
+            recomienda:[{tipo:'reconocimiento_propiedad', porque:'Sirve como prueba de la posesión, no como título. Lee la advertencia antes de generarlo.'}] },
+          { clave:'poliza', etiqueta:'Contratar los servicios del despacho',
+            recomienda:[{tipo:'poliza_juridica', porque:'Contrato de prestación de servicios profesionales: se cobra el servicio, no el resultado.'}] }
+        ] },
+      { id:'ejidal', pregunta:'¿El inmueble es ejidal o parcelario?',
+        aplicaSi:{ q:'que_quiere', distintoDe:['poliza','deuda'] },
+        ayuda:'Si lo es, el asunto es materia federal y ninguna cláusula de este paquete sirve.',
+        precarga:{ filtro:{ ejidal:'{{valor}}' } },
+        opciones:[
+          { clave:'no', etiqueta:'No, es propiedad privada' },
+          { clave:'si', etiqueta:'Sí, es ejidal o parcelario', freno:'ejidal' } ] },
+      { id:'propietario_fallecido', pregunta:'¿El titular del inmueble falleció?',
+        aplicaSi:{ q:'que_quiere', en:['transmitir','ceder_posesion','titular','herencia','reconocer'] },
+        ayuda:'Es la pregunta que más cambia el camino, y la misma familia puede llegar por cualquiera de los documentos anteriores.',
+        opciones:[
+          { clave:'no', etiqueta:'No, vive' },
+          { clave:'si', etiqueta:'Sí, falleció',
+            recomienda:[{tipo:'denuncia_juicio_sucesorio', porque:'Antes de transmitir nada hay que abrir la sucesión: quien no es heredero declarado no puede vender ni ceder.'}] } ] },
+      { id:'vivienda_social', pregunta:'¿Era una vivienda de interés social o popular?',
+        aplicaSi:{ q:'propietario_fallecido', es:'si' },
+        ayuda:'Si lo era y hubo designación de beneficiarios, el juicio sucesorio sobra: se resuelve ante notario en siete días.',
+        precarga:{ filtro:{ viviendaInteresSocial:'{{valor}}' } },
+        opciones:[
+          { clave:'no', etiqueta:'No, o no consta' },
+          { clave:'si', etiqueta:'Sí, o es probable' } ] },
+      { id:'beneficiarios', pregunta:'¿Designó beneficiarios ante el organismo de vivienda?',
+        aplicaSi:{ q:'vivienda_social', es:'si' },
+        ayuda:'Es la segunda mitad del supuesto: sin designación el trámite notarial no opera y el juicio sucesorio sí es el camino.',
+        precarga:{ filtro:{ designacionBeneficiarios:'{{valor}}' } },
+        opciones:[
+          { clave:'no', etiqueta:'No, o no consta' },
+          { clave:'si', etiqueta:'Sí, hay designación', freno:'viviendaInteresSocial' } ] },
+      { id:'titular_inscrito', pregunta:'¿Hay alguien inscrito como propietario en el Registro Público?',
+        aplicaSi:{ q:'que_quiere', es:'titular' },
+        ayuda:'Es lo que decide la vía: contra alguien, o sin nadie enfrente.',
+        opciones:[
+          { clave:'si', etiqueta:'Sí, hay titular inscrito',
+            recomienda:[{tipo:'demanda_prescripcion_positiva', porque:'Hay a quién demandar: es juicio contra el titular registral y la sentencia se inscribe como título.'}] },
+          { clave:'no', etiqueta:'No está inscrito a nombre de nadie',
+            recomienda:[{tipo:'informacion_ad_perpetuam', porque:'Sin titular inscrito no hay a quién demandar: la vía es la información ad perpétuam, jurisdicción voluntaria con citación del Ministerio Público.'}] },
+          { clave:'no_se', etiqueta:'No se sabe todavía',
+            nota:'Pide el certificado de no inscripción o la búsqueda registral antes de elegir: de eso depende la vía entera.' } ] },
+      { id:'compraventa_previa', pregunta:'¿Este inmueble ya fue objeto de una compraventa entre estas mismas partes?',
+        aplicaSi:{ q:'que_quiere', es:'apartar' },
+        ayuda:'Está prohibida la promesa de venta de un inmueble que ya fue vendido entre los mismos contratantes.',
+        precarga:{ filtro:{ compraventaPrevia:'{{valor}}' } },
+        opciones:[
+          { clave:'no', etiqueta:'No' },
+          { clave:'si', etiqueta:'Sí', freno:'promesaProhibida' } ] },
+      { id:'como_paga', pregunta:'¿Cómo paga el comprador?',
+        aplicaSi:{ q:'que_quiere', es:'transmitir' },
+        ayuda:'De esto depende el contrato entero: no es lo mismo pagar de contado que financiar a dos años.',
+        opciones:[
+          { clave:'contado', etiqueta:'Todo de contado',
+            recomienda:[{tipo:'compraventa_contado', porque:'Se paga en un solo acto: no hay saldo que garantizar ni calendario que vigilar.'}] },
+          { clave:'enganche', etiqueta:'Enganche y el saldo en una sola fecha',
+            recomienda:[{tipo:'compraventa_enganche', porque:'Un enganche y un saldo con fecha cierta.'}] },
+          { clave:'plazos', etiqueta:'Enganche y parcialidades',
+            recomienda:[{tipo:'compraventa_plazos', porque:'Calendario de pagos con rescisión por falta de pago.'}] },
+          { clave:'plazos_reserva', etiqueta:'Enganche y parcialidades, y el vendedor conserva la propiedad hasta el último pago',
+            recomienda:[{tipo:'plan_pagos_reserva_dominio', porque:'Es el diferenciador del despacho: el dominio no pasa hasta el pago total y el pacto se inscribe para que surta efectos contra terceros.'}] } ] },
+      { id:'destino_renta', pregunta:'¿Para qué se renta?',
+        aplicaSi:{ q:'que_quiere', es:'arrendar' },
+        ayuda:'Cambia el plazo máximo legal y las cláusulas del giro.',
+        precarga:{ campo:{ destino_inmueble:'{{valor}}' } },
+        opciones:[
+          { clave:'habitacion', etiqueta:'Para vivir',
+            recomienda:[{tipo:'arrendamiento_habitacion', porque:'Casa habitación: el plazo máximo legal es el más corto de los tres.'}] },
+          { clave:'comercio', etiqueta:'Para un negocio o una industria',
+            recomienda:[{tipo:'arrendamiento_local', porque:'Local comercial: añade giro autorizado, licencias, anuncio y el seguro obligatorio si el giro es peligroso.'}] } ] }
+    ],
+    /* un freno declarado aquí que no está en fueraDeAlcance */
+    frenos:{
+      promesaProhibida:{ etiqueta:'Promesa prohibida por la ley de la entidad',
+        aviso:'Está prohibida la promesa de venta de un inmueble que ya fue objeto de una compraventa entre los mismos contratantes. Revisa con el abogado si lo que procede es exigir la forma legal del contrato ya celebrado.' }
+    }
   },
   /* Un tipo que el catálogo apagó SOLO por falta de texto se vuelve a encender
      cuando el texto llega, porque el motivo dejó de ser cierto. Es una decisión
@@ -2698,7 +2805,7 @@ function avisosDeVia(){
 
 /* ---------- pintado ---------- */
 function pintar(){
-  if(!tipoActual){ pintarSelector(); return; }
+  if(!tipoActual){ (vista==='diagnostico'? pintarDiagnostico() : pintarSelector()); return; }
   normalizarPartes();
   calcular(tipoActual,ctx);
   panels=pasosDe(tipoActual);
@@ -2726,8 +2833,142 @@ function pintar(){
 function botonTipo(){
   return '<button class="rg-mini" id="rgChangeType" style="margin-bottom:14px">← Cambiar tipo de documento</button>';
 }
+
+/* ============================================================
+   DIAGNÓSTICO DE ENTRADA — recorre las preguntas del paquete,
+   recomienda tipo, frena lo que está fuera de alcance y precarga
+   lo contestado. No decide: el abogado elige y puede saltárselo.
+   ============================================================ */
+var diag = {};            /* respuestas: {idPregunta: clave} */
+var vista = 'diagnostico';   /* 'diagnostico' | 'selector' */
+function DG(){ return J.diagnostico || {preguntas:[]}; }
+function preguntaAplica(q){
+  var a=q.aplicaSi;
+  if(!a) return true;
+  var v=diag[a.q];
+  if(v===undefined) return false;
+  if(a.es!==undefined) return v===a.es;
+  if(a.en) return a.en.indexOf(v)>=0;
+  if(a.distintoDe) return a.distintoDe.indexOf(v)<0;
+  return true;
+}
+function preguntasVisibles(){ return (DG().preguntas||[]).filter(preguntaAplica); }
+function opcionElegida(q){
+  return (q.opciones||[]).filter(function(o){ return o.clave===diag[q.id]; })[0]||null;
+}
+function frenoDiagnostico(){
+  var vs=preguntasVisibles();
+  for(var i=0;i<vs.length;i++){
+    var o=opcionElegida(vs[i]);
+    if(o && o.freno){
+      var f=(J.fueraDeAlcance||{})[o.freno] || (DG().frenos||{})[o.freno];
+      if(f) return Object.assign({id:o.freno}, f);
+    }
+  }
+  return null;
+}
+function recomendaciones(){
+  var out=[], vistos={};
+  preguntasVisibles().forEach(function(q){
+    var o=opcionElegida(q);
+    (o&&o.recomienda||[]).forEach(function(r){
+      if(vistos[r.tipo]) return;
+      vistos[r.tipo]=1; out.push(r);
+    });
+  });
+  return out;
+}
+function diagnosticoCompleto(){
+  var vs=preguntasVisibles();
+  return vs.length>0 && vs.every(function(q){ return diag[q.id]!==undefined; });
+}
+/* lo contestado en el diagnóstico no se vuelve a preguntar */
+function precargarDesdeDiagnostico(){
+  preguntasVisibles().forEach(function(q){
+    var o=opcionElegida(q); if(!o || !q.precarga) return;
+    Object.keys(q.precarga.filtro||{}).forEach(function(k){
+      filtro[k] = String(q.precarga.filtro[k]).replace('{{valor}}', o.clave);
+    });
+    Object.keys(q.precarga.campo||{}).forEach(function(k){
+      var v=String(q.precarga.campo[k]).replace('{{valor}}', o.clave);
+      if(defCampo(tipoActual,k)) ctx.campo[k]=v;
+    });
+  });
+  /* el diagnóstico pregunta por el fallecido; el sucesorio ya lo sabe */
+  if(diag.propietario_fallecido==='si' && defCampo(tipoActual,'tipo_sucesion') && !lleno(ctx.campo.tipo_sucesion))
+    ctx.campo.tipo_sucesion='intestamentaria';
+}
+function panelDiagnostico(){
+  var d=DG();
+  var h='<div class="rg-panel active">';
+  h+='<div class="rg-panel-title">'+esc(d.titulo||'Diagnóstico')+'</div>';
+  h+='<div class="rg-panel-note">'+esc(d.nota||'')+'</div>';
+  h+='<button class="rg-mini" id="rgSaltar" style="margin-bottom:14px">Sé qué documento necesito →</button>';
+  var vs=preguntasVisibles();
+  vs.forEach(function(q){
+    h+='<div class="rg-field"><label class="rg-label">'+esc(q.pregunta)+'</label>'+
+       '<div class="rg-chips" style="flex-direction:column">'+
+       (q.opciones||[]).map(function(o){
+         return '<button class="rg-chip'+(diag[q.id]===o.clave?' on':'')+'" data-diag="'+esc(q.id)+'" data-val="'+esc(o.clave)+'" style="width:100%">'+esc(o.etiqueta)+'</button>';
+       }).join('')+'</div>'+
+       (q.ayuda? '<div class="rg-hint">'+esc(q.ayuda)+'</div>':'')+'</div>';
+    var oe=opcionElegida(q);
+    if(oe && oe.nota) h+='<div class="rg-note warn"><b>Antes de seguir</b>'+esc(oe.nota)+'</div>';
+  });
+  var fr=frenoDiagnostico();
+  if(fr){
+    h+='<div class="rg-note danger"><b>'+esc(fr.etiqueta)+': fuera del alcance de esta herramienta</b>'+esc(fr.aviso)+'</div>';
+    h+='<div class="rg-hint">Puedes seguir al selector de todas formas: el generador se detendrá ahí mismo con este motivo.</div>';
+  }
+  var recs=recomendaciones();
+  if(recs.length && !fr){
+    h+='<div class="rg-group-title">Lo que procede</div>';
+    recs.forEach(function(r){
+      var t=D.tipos.filter(function(x){ return x.id===r.tipo; })[0];
+      var rt=t? resolverTipo(r.tipo) : null;
+      var no=rt? tipoNoOfrecido(rt) : null;
+      if(!t){
+        h+='<div class="rg-note warn"><b>'+esc(nombreDeTipoSuelto(r.tipo))+' — todavía no está en el catálogo</b>'+
+           esc(r.porque)+' El equipo legal ya tiene el texto de esta vía; en cuanto el tipo exista, aparecerá aquí.</div>';
+        return;
+      }
+      if(no){
+        h+='<div class="rg-note warn"><b>'+esc(t.nombre)+' — es lo que procede, pero no se puede generar</b>'+
+           esc(r.porque)+'<br><br><b>Por qué no:</b> '+esc(no)+'</div>';
+        return;
+      }
+      h+='<div class="rg-note okn"><b>'+esc(t.nombre)+'</b>'+esc(r.porque)+
+         '<br><br><button class="rg-chip on" data-tipo="'+esc(t.id)+'" data-desde-diag="1">Redactar este documento →</button></div>';
+    });
+    h+='<div class="rg-hint">Es una recomendación, no una decisión: puedes ir al selector y elegir otro.</div>';
+  }
+  if(diagnosticoCompleto() && !recs.length && !fr)
+    h+='<div class="rg-note info"><b>Sin recomendación todavía</b>Con estas respuestas no hay un tipo que recomendar. Ve al selector y elige: los que no se pueden generar salen ahí con su motivo.</div>';
+  h+='<div style="margin-top:16px"><button class="rg-mini" id="rgIrSelector">Ver todos los documentos</button>'+
+     ' <button class="rg-mini" id="rgReiniciarDiag">Empezar de nuevo</button></div>';
+  h+='</div>';
+  return h;
+}
+function nombreDeTipoSuelto(id){
+  return String(id).replace(/_/g,' ').replace(/^\w/, function(c){ return c.toUpperCase(); });
+}
+function pintarDiagnostico(){
+  $('#rgForm').innerHTML=panelDiagnostico();
+  $('#rgSteps').innerHTML=''; $('#rgFill').style.width='0%';
+  $('#rgPrev').style.visibility='hidden'; $('#rgNext').style.display='none'; $('#rgWord').style.display='none';
+  $('#rgFormTitle').textContent='Diagnóstico del caso';
+  $('#rgFormSub').textContent='Qué documento procede y por qué';
+  var fr=frenoDiagnostico();
+  $('#rgDoc').innerHTML = fr
+    ? '<div class="d-pend">'+esc(fr.etiqueta.toUpperCase())+'</div><div class="d-p">'+esc(fr.aviso)+'</div>'
+    : '<div class="d-p" style="color:#98a0b0;font-style:italic">Contesta el diagnóstico o salta al selector: la vista previa aparece en cuanto elijas el tipo de documento.</div>';
+  $('#rgDocState').textContent='';
+  [$('#rgWord'),$('#rgWord2')].forEach(function(b){ if(b){ b.disabled=true; b.title='Elige primero el tipo de documento'; } });
+}
 function pintarSelector(){
-  var h='<div class="rg-panel active"><div class="rg-panel-title">¿Qué documento vas a redactar?</div>'+
+  var h='<div class="rg-panel active">'+
+    '<button class="rg-mini" id="rgReiniciarDiag" style="margin-bottom:14px">← Volver al diagnóstico del caso</button>'+
+    '<div class="rg-panel-title">¿Qué documento vas a redactar?</div>'+
     '<div class="rg-panel-note">'+TIPOS_VISIBLES.length+' tipos sobre el mismo motor. Los convenios familiares van en el otro generador.</div>';
   var puestos={};
   FAMILIAS.forEach(function(f){
@@ -2862,8 +3103,21 @@ $('#rgForm').addEventListener('change', function(e){
 });
 $('#rgForm').addEventListener('click', function(e){
   var b=e.target.closest('button'); if(!b) return;
-  if(b.id==='rgChangeType'){ tipoActual=null; paso=0; pintarSelector(); return; }
-  if(b.hasAttribute('data-tipo')){ inicializarCaso(b.getAttribute('data-tipo')); paso=0; casoId=null; pintar(); guardarAuto(); return; }
+  if(b.id==='rgChangeType'){ tipoActual=null; paso=0; vista='selector'; pintar(); return; }
+  if(b.id==='rgSaltar' || b.id==='rgIrSelector'){ vista='selector'; pintar(); return; }
+  if(b.id==='rgReiniciarDiag'){ diag={}; vista='diagnostico'; pintar(); return; }
+  if(b.hasAttribute('data-diag')){ diag[b.getAttribute('data-diag')]=b.getAttribute('data-val');
+    /* al cambiar una respuesta, se olvidan las que dependían de ella */
+    Object.keys(diag).forEach(function(k){
+      var q=(DG().preguntas||[]).filter(function(x){ return x.id===k; })[0];
+      if(q && !preguntaAplica(q)) delete diag[k];
+    });
+    pintar(); guardarAuto(); return; }
+  if(b.hasAttribute('data-tipo')){
+    inicializarCaso(b.getAttribute('data-tipo'));
+    if(b.hasAttribute('data-desde-diag') || Object.keys(diag).length) precargarDesdeDiagnostico();
+    paso=0; casoId=null; pintar(); guardarAuto(); return;
+  }
   if(b.hasAttribute('data-filtro')){
     var kf=b.getAttribute('data-filtro'), vf=b.getAttribute('data-val');
     filtro[kf] = (kf==='advertenciaLeida') ? (vf==='si') : vf;
@@ -2894,7 +3148,7 @@ function toast(msg){ $('#rgToastMsg').textContent=msg; $('#rgToast').classList.a
 var PREF='regutt:caso:', ULT='regutt:ultimo';
 function snapshot(){
   return { v:1, tipo:tipoActual?tipoActual.id:null, campo:clonar(ctx.campo), parte:clonar(ctx.parte),
-           opcionales:clonar(ctx.opcionales), filtro:clonar(filtro), paquete:J.id,
+           opcionales:clonar(ctx.opcionales), filtro:clonar(filtro), diag:clonar(diag), paquete:J.id,
            paso:paso, guardado:new Date().toISOString() };
 }
 function restaurar(s){
@@ -2904,6 +3158,7 @@ function restaurar(s){
   if(s.paquete && s.paquete!==J.id){ toast('Ese caso se capturó con el paquete «'+s.paquete+'»: no se abre con otra jurisdicción'); return false; }
   inicializarCaso(s.tipo);
   filtro = Object.assign({ejidal:null, compraventaPrevia:null, viviendaInteresSocial:null, designacionBeneficiarios:null}, s.filtro||{});
+  diag = clonar(s.diag||{});
   ctx.campo=Object.assign(ctx.campo, s.campo||{});
   if(s.parte) ctx.parte=clonar(s.parte);
   ctx.opcionales=Object.assign(ctx.opcionales, s.opcionales||{});
@@ -2967,9 +3222,10 @@ $('#rgDel').addEventListener('click', function(){
   localStorage.removeItem(k); if(casoId===k) casoId=null; refrescarCasos(); toast('Caso borrado');
 });
 $('#rgNew').addEventListener('click', function(){
-  casoId=null; tipoActual=null; paso=0; filtro={ejidal:null, compraventaPrevia:null, viviendaInteresSocial:null, designacionBeneficiarios:null};
+  casoId=null; tipoActual=null; paso=0; diag={}; vista='diagnostico';
+  filtro={ejidal:null, compraventaPrevia:null, viviendaInteresSocial:null, designacionBeneficiarios:null};
   try{ localStorage.removeItem(ULT); }catch(e){}
-  $('#rgCases').value=''; pintarSelector(); toast('Caso nuevo');
+  $('#rgCases').value=''; pintar(); toast('Caso nuevo');
 });
 
 /* ---------- configuración del despacho (membrete) ---------- */
@@ -3087,7 +3343,7 @@ $('#rgStatTexto').textContent = Object.keys(TEXTOS).length;
 refrescarCasos();
 var ultimo=null;
 try{ ultimo=JSON.parse(localStorage.getItem(ULT)||'null'); }catch(e){}
-if(!(ultimo && restaurar(ultimo))) pintarSelector();
+if(!(ultimo && restaurar(ultimo))) pintar();
 
 /* ---------- ganchos de prueba automatizada ---------- */
 window.__regutt = {
@@ -3095,6 +3351,14 @@ window.__regutt = {
   cita:cita, citaArts:citaArts, citaDesmentida:citaDesmentida,
   filtro:function(k,v){ if(v!==undefined) filtro[k]=v; pintar(); return filtro; },
   frenos:function(){ return frenosDe(tipoActual); },
+  diag:function(k,v){ if(k===undefined) return diag; if(v===null) diag={}; else diag[k]=v;
+    Object.keys(diag).forEach(function(x){ var q=(DG().preguntas||[]).filter(function(y){return y.id===x;})[0];
+      if(q && !preguntaAplica(q)) delete diag[x]; });
+    pintar(); return diag; },
+  vista:function(v){ if(v){ vista=v; pintar(); } return vista; },
+  preguntasVisibles:function(){ return preguntasVisibles().map(function(q){ return q.id; }); },
+  recomendaciones:recomendaciones,
+  frenoDiagnostico:frenoDiagnostico,
   cobertura:function(id){ return coberturaDe(resolverTipo(id||tipoActual.id)); },
   clausulasConMP:clausulasConMP,
   tipoNoOfrecido:function(x){ return tipoNoOfrecido(typeof x==='string'? resolverTipo(x) : x); },
